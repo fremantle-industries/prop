@@ -1,0 +1,52 @@
+global:
+  scrape_interval:     15s
+  evaluation_interval: 15s
+  # scrape_timeout is set to the global default (10s).
+
+  # Attach these labels to any time series or alerts when communicating with
+  # external systems (federation, remote storage, Alertmanager).
+  # external_labels:
+  #     monitor: 'my-project'
+
+rule_files:
+  - 'alerts.yml'
+
+# alert
+# alerting:
+#   alertmanagers:
+#   - scheme: http
+#     static_configs:
+#     - targets:
+#       - "alertmanager:9093"
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+         - targets: ['localhost:9090']
+
+  - job_name: 'monitor'
+    # Override the global default and scrape targets from this job every 5 seconds.
+    scrape_interval: 5s
+    static_configs:
+         - targets: ['web:9569']
+
+  - job_name: 'workbench'
+    # Override the global default and scrape targets from this job every 5 seconds.
+    scrape_interval: 5s
+    static_configs:
+         - targets: ['web:9570']
+
+  # Not sure how to just extract the GCE segments for use in a DNS name
+  # -__meta_gce_instance_name returns 'trader;' when we just want 'trader'
+  # -__meta_gce_zone returns the full URL when we just want asia-northeast1-a
+  - job_name: 'traders asia-northeast1-a'
+    gce_sd_configs:
+      - zone: asia-northeast1-a
+        project: freo-cap
+    relabel_configs:
+      - source_labels: [__meta_gce_project]
+        target_label: __address__
+        replacement: "trader.asia-northeast1-a.c.${1}.internal:9568"
+      - source_labels: [__meta_gce_label_distributed_erlang_cluster]
+        target_label: distributed_erlang_cluster
+        replacement: "${1}"
