@@ -45,7 +45,7 @@ defmodule Prop.MixProject do
       {:phoenix_live_view, "~> 0.15"},
       {:plug_cowboy, "~> 2.0"},
       {:postgrex, ">= 0.0.0"},
-      {:rube, "~> 0.0.2"},
+      {:rube, "~> 0.1.0"},
       # {:slurpee, github: "fremantle-industries/slurpee", branch: "main", override: true},
       {:slurpee, "~> 0.0.10"},
       # {:stylish, github: "fremantle-industries/stylish", branch: "main", override: true},
