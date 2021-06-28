@@ -1,0 +1,73 @@
+name: test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - '*'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    name: Test OTP ${{matrix.otp}} / Elixir ${{matrix.elixir}}
+
+    strategy:
+      matrix:
+        otp: [22.x, 23.x, 24.x]
+        elixir: [1.12.x]
+
+    services:
+      db:
+        image: postgres:13.1
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+          options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v2.3.4
+
+      - uses: erlef/setup-beam@v1.8.3
+        with:
+          otp-version: ${{matrix.otp}}
+          elixir-version: ${{matrix.elixir}}
+
+      - name: Cache Dependencies
+        uses: actions/cache@v2.1.6
+        with:
+          path: |
+            deps
+            _build/dev
+            _build/test
+          key: elixir-cache-${{secrets.CACHE_VERSION}}-${{matrix.elixir}}-otp-${{matrix.otp}}-${{runner.os}}-${{hashFiles('mix.lock')}}-${{hashFiles('assets/package-lock.json')}}-${{github.ref}}
+          restore-keys: |
+            elixir-cache-${{secrets.CACHE_VERSION}}-${{matrix.elixir}}-otp-${{matrix.otp}}-${{runner.os}}-${{hashFiles('mix.lock')}}-${{hashFiles('assets/package-lock.json')}}-
+            elixir-cache-${{secrets.CACHE_VERSION}}-${{matrix.elixir}}-otp-${{matrix.otp}}-${{runner.os}}-
+
+      - name: Install Dependencies
+        run: |
+          mix local.rebar --force
+          mix local.hex --force
+          mix setup.deps
+
+      - name: Set chromedriver bin path for Wallaby
+        run: echo "CHROMEDRIVER_BIN_PATH=$CHROMEWEBDRIVER/chromedriver" >> $GITHUB_ENV
+      - name: Test
+        env:
+          MIX_ENV: test
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/prop_?
+          SECRET_KEY_BASE: ${{secrets.SECRET_KEY_BASE}}
+          LIVE_VIEW_SIGNING_SALT: ${{secrets.LIVE_VIEW_SIGNING_SALT}}
+          GUARDIAN_SECRET_KEY: ${{secrets.GUARDIAN_SECRET_KEY}}
+        run: |
+          mix tai.gen.migration
+          mix ecto.create
+          mix ecto.migrate
+          mix test
+
+      - name: Dialyzer
+        run: mix dialyzer
