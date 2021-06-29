@@ -7,6 +7,7 @@ prop_host = System.get_env("PROP_HOST") || "prop.localhost"
 workbench_host = System.get_env("WORKBENCH_HOST") || "workbench.localhost"
 rube_host = System.get_env("RUBE_HOST") || "rube.localhost"
 slurpee_host = System.get_env("SLURPEE_HOST") || "slurpee.localhost"
+livebook_host = System.get_env("LIVEBOOK_HOST") || "livebook.localhost"
 grafana_host = System.get_env("GRAFANA_HOST") || "grafana.localhost"
 prometheus_host = System.get_env("PROMETHEUS_HOST") || "prometheus.localhost"
 
@@ -36,6 +37,13 @@ slurpee_secret_key_base =
 
 slurpee_live_view_signing_salt =
   System.get_env("SLURPEE_LIVE_VIEW_SIGNING_SALT") || "TolmUusQ6//zaa5GZHu7DG2V3YAgOoP/"
+
+livebook_secret_key_base =
+  System.get_env("LIVEBOOK_SECRET_KEY_BASE") ||
+    "vJP36v4Gi2Orw8b8iBRg6ZFdzXKLvcRYkk1AaMLYX0+ry7k5XaJXd/LY/itmoxPP"
+
+livebook_live_view_signing_salt =
+  System.get_env("LIVEBOOK_LIVE_VIEW_SIGNING_SALT") || "TolmUusQ6//zaa5GZHu7DG2V3YAgOoP/"
 
 # Telemetry
 config :telemetry_poller, :default, period: 1_000
@@ -1519,6 +1527,30 @@ config :slurp,
     }
   }
 
+# Livebook
+config :livebook, LivebookWeb.Endpoint,
+  url: [host: livebook_host, port: http_port],
+  pubsub_server: Livebook.PubSub,
+  secret_key_base: prop_secret_key_base,
+  live_view: [signing_salt: prop_live_view_signing_salt],
+  server: false
+
+config :livebook, :root_path, Livebook.Config.root_path!("LIVEBOOK_ROOT_PATH")
+
+if password = Livebook.Config.password!("LIVEBOOK_PASSWORD") do
+  config :livebook, authentication_mode: :password, password: password
+else
+  config :livebook, token: Livebook.Utils.random_id()
+end
+
+if ip = Livebook.Config.ip!("LIVEBOOK_IP") do
+  config :livebook, LivebookWeb.Endpoint, http: [ip: ip]
+end
+
+config :livebook, :cookie, Livebook.Config.cookie!("LIVEBOOK_COOKIE") || Livebook.Utils.random_cookie()
+
+config :livebook, :default_runtime, Livebook.Config.default_runtime!("LIVEBOOK_DEFAULT_RUNTIME") || {Livebook.Runtime.ElixirStandalone, []}
+
 # Master Proxy
 config :master_proxy,
   # any Cowboy options are allowed
@@ -1540,6 +1572,10 @@ config :master_proxy,
     %{
       host: ~r/#{slurpee_host}/,
       phoenix_endpoint: SlurpeeWeb.Endpoint
+    },
+    %{
+      host: ~r/#{livebook_host}/,
+      phoenix_endpoint: LivebookWeb.Endpoint
     }
   ]
 
@@ -1823,6 +1859,9 @@ if config_env() == :dev do
   config :phoenix, :plug_init_mode, :runtime
 
   config :tai, Tai.NewOrders.OrderRepo, show_sensitive_data_on_connection_error: true
+
+  # Disable authentication mode during dev
+  config :livebook, :authentication_mode, :disabled
 
   # config :libcluster,
   #   topologies: [

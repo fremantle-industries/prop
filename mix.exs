@@ -35,6 +35,7 @@ defmodule Prop.MixProject do
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
       {:libcluster, "~> 3.2"},
+      {:livebook, "~> 0.2"},
       {:master_proxy, "~> 0.1"},
       {:navigator, "~> 0.0.4"},
       {:notified_phoenix, "~> 0.0.4"},

@@ -96,6 +96,7 @@ services:
       - WORKBENCH_HOST
       - RUBE_HOST
       - SLURPEE_HOST
+      - LIVEBOOK_HOST
       - GRAFANA_HOST
       - PROMETHEUS_HOST
 
