@@ -8,6 +8,12 @@
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
         "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
         "type": "dashboard"
       }
     ]
@@ -15,8 +21,8 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 16,
-  "iteration": 1628143656586,
+  "id": 5,
+  "iteration": 1628229003515,
   "links": [
     {
       "asDropdown": false,
@@ -42,8 +48,8 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
+            "axisLabel": "Price",
+            "axisPlacement": "left",
             "barAlignment": 0,
             "drawStyle": "line",
             "fillOpacity": 0,
@@ -69,6 +75,7 @@
               "mode": "off"
             }
           },
+          "decimals": 1,
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -82,17 +89,42 @@
                 "value": 80
               }
             ]
-          }
+          },
+          "unit": "currencyUSD"
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "qty"
+            },
+            "properties": [
+              {
+                "id": "custom.axisPlacement",
+                "value": "right"
+              },
+              {
+                "id": "unit"
+              },
+              {
+                "id": "custom.axisLabel",
+                "value": "Volume"
+              },
+              {
+                "id": "custom.drawStyle",
+                "value": "bars"
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
-        "h": 18,
+        "h": 26,
         "w": 24,
         "x": 0,
         "y": 0
       },
-      "id": 2,
+      "id": 4,
       "options": {
         "legend": {
           "calcs": [],
@@ -103,42 +135,14 @@
           "mode": "single"
         }
       },
-      "pluginVersion": "8.0.0",
       "targets": [
         {
           "format": "time_series",
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  $__time(trades.time),\n  trades.venue || ':' || trades.product AS product,\n  trades.price\nFROM\n  trades\n  LEFT JOIN products ON trades.venue = products.venue AND trades.product = products.symbol\nWHERE\n  $__timeFilter(trades.time)\n  AND trades.venue IN ($venue)\n  AND products.symbol IN ($symbol)\n  AND products.base IN ($base)\n  AND products.quote IN ($quote)\nORDER BY trades.time ASC\n",
+          "rawSql": "SELECT\n  $__time(trades.time),\n  trades.venue || ':' || trades.product AS product,\n  trades.price,\n  trades.qty\nFROM\n  trades\n  LEFT JOIN products ON trades.venue = products.venue AND trades.product = products.symbol\nWHERE\n  $__timeFilter(trades.time)\n  AND trades.venue IN ($venue)\n  AND products.symbol IN ($symbol)\n  AND products.base IN ($base)\n  AND products.quote IN ($quote)\nORDER BY trades.time ASC\n",
           "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "timeColumn": "time",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
-        },
-        {
-          "format": "time_series",
-          "group": [],
-          "hide": false,
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "SELECT\n  $__time(trades.time),\n  trades.venue || ':' || trades.product AS product,\n  trades.qty\nFROM\n  trades\n  LEFT JOIN products ON trades.venue = products.venue AND trades.product = products.symbol\nWHERE\n  $__timeFilter(trades.time)\n  AND trades.venue IN ($venue)\n  AND products.symbol IN ($symbol)\n  AND products.base IN ($base)\n  AND products.quote IN ($quote)\nORDER BY trades.time ASC\n",
-          "refId": "B",
           "select": [
             [
               {
@@ -232,10 +236,10 @@
         "current": {
           "selected": false,
           "text": [
-            "aave"
+            "btc"
           ],
           "value": [
-            "aave"
+            "btc"
           ]
         },
         "datasource": "Prop TimescaleDB",
@@ -258,12 +262,20 @@
       {
         "allValue": null,
         "current": {
-          "selected": false,
+          "selected": true,
           "text": [
-            "All"
+            "usd",
+            "usdc",
+            "usdt",
+            "busd",
+            "tusd"
           ],
           "value": [
-            "$__all"
+            "usd",
+            "usdc",
+            "usdt",
+            "busd",
+            "tusd"
           ]
         },
         "datasource": "Prop TimescaleDB",
@@ -286,12 +298,12 @@
     ]
   },
   "time": {
-    "from": "2021-08-05T03:14:18.105Z",
-    "to": "2021-08-05T04:48:32.722Z"
+    "from": "2021-05-07T07:00:00.000Z",
+    "to": "2021-05-28T06:59:59.000Z"
   },
   "timepicker": {},
   "timezone": "",
   "title": "Trades",
   "uid": "DSr6lvG7z",
-  "version": 5
+  "version": 2
 }

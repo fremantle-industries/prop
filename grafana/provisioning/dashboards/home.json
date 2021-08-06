@@ -8,6 +8,12 @@
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
         "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
         "type": "dashboard"
       }
     ]
@@ -15,8 +21,22 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 18,
+  "id": 9,
   "links": [
+    {
+      "asDropdown": false,
+      "icon": "external link",
+      "includeVars": false,
+      "keepTime": false,
+      "tags": [
+        "station"
+      ],
+      "targetBlank": false,
+      "title": "",
+      "tooltip": "",
+      "type": "dashboards",
+      "url": ""
+    },
     {
       "asDropdown": false,
       "icon": "external link",
@@ -422,6 +442,24 @@
       ],
       "title": "Top 7d Gainers",
       "type": "timeseries"
+    },
+    {
+      "datasource": null,
+      "description": "",
+      "gridPos": {
+        "h": 12,
+        "w": 6,
+        "x": 0,
+        "y": 22
+      },
+      "id": 7,
+      "options": {
+        "content": "* [Bitcoin](http://grafana.localhost/d/1_1B9TMnk/station?orgId=1&var-token=17&var-venue=All&var-symbol=All&var-base=All&var-quote=busd&var-quote=tusd&var-quote=usd&var-quote=usdc&var-quote=usdt)\n* [Ethereum](http://grafana.localhost/d/1_1B9TMnk/station?orgId=1&var-token=33&var-venue=All&var-symbol=All&var-base=All&var-quote=busd&var-quote=tusd&var-quote=usd&var-quote=usdc&var-quote=usdt)",
+        "mode": "markdown"
+      },
+      "pluginVersion": "8.1.0",
+      "title": "Major Stations",
+      "type": "text"
     }
   ],
   "schemaVersion": 30,
@@ -440,5 +478,5 @@
   "timezone": "",
   "title": "Home",
   "uid": "YBJH3vM7k",
-  "version": 12
+  "version": 3
 }
