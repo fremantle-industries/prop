@@ -48,8 +48,6 @@ password: password
 
 ## Prop - [http://prop.localhost](http://prop.localhost)
 
-![prop tools](./docs/prop-tools.png)
-
 ## Workbench - [http://workbench.localhost](http://workbench.localhost)
 
 From idea to execution, manage your trading operation across a distributed cluster
