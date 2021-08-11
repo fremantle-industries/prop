@@ -76,7 +76,7 @@ defmodule Prop.MixProject do
   end
 
   defp description do
-    "An open and opinionated DeFi/CeFi trading platform using productive & familiar open source libraries and tools for strategy research, execution and operation"
+    "An open and opinionated DeFi/CeFi/TradFi trading platform using productive & familiar open source libraries and tools for strategy research, execution and operation"
   end
 
   defp package do

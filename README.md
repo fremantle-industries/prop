@@ -2,7 +2,7 @@
 [![Build Status](https://github.com/fremantle-industries/prop/workflows/test/badge.svg?branch=main)](https://github.com/fremantle-industries/prop/actions?query=workflow%3Atest)
 [![hex.pm version](https://img.shields.io/hexpm/v/prop.svg?style=flat)](https://hex.pm/packages/prop)
 
-DeFi? CeFi? TradeFi?
+DeFi? CeFi? TradFi?
 
 `prop` is an open and opinionated trading platform using productive & familiar
 open source libraries and tools for strategy research, execution and operation.
