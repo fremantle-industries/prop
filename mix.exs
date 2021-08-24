@@ -32,7 +32,7 @@ defmodule Prop.MixProject do
       {:confex, "~> 3.5.0"},
       {:ecto_sql, "~> 3.4"},
       {:gettext, "~> 0.11"},
-      {:history, "~> 0.0.5"},
+      {:history, "~> 0.0.6"},
       {:jason, "~> 1.0"},
       {:libcluster, "~> 3.2"},
       {:livebook, "~> 0.2"},

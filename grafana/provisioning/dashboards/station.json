@@ -22,7 +22,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": 15,
-  "iteration": 1628287117533,
+  "iteration": 1629773470454,
   "links": [
     {
       "asDropdown": false,
@@ -400,7 +400,7 @@
             "axisLabel": "APR",
             "axisPlacement": "auto",
             "barAlignment": 0,
-            "drawStyle": "line",
+            "drawStyle": "bars",
             "fillOpacity": 0,
             "gradientMode": "none",
             "hideFrom": {
@@ -502,9 +502,9 @@
       {
         "allValue": null,
         "current": {
-          "selected": false,
+          "selected": true,
           "text": "Bitcoin",
-          "value": "17"
+          "value": "22"
         },
         "datasource": "Prop TimescaleDB",
         "definition": "SELECT tokens.name AS __text, id AS __value FROM tokens ORDER BY tokens.name",
@@ -616,16 +616,14 @@
             "tusd",
             "usd",
             "usdc",
-            "usdt",
-            "pax"
+            "usdt"
           ],
           "value": [
             "busd",
             "tusd",
             "usd",
             "usdc",
-            "usdt",
-            "pax"
+            "usdt"
           ]
         },
         "datasource": "Prop TimescaleDB",
@@ -724,12 +722,12 @@
     ]
   },
   "time": {
-    "from": "2021-08-04T07:00:00.000Z",
-    "to": "2021-08-07T01:00:00.000Z"
+    "from": "now-21d",
+    "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "Station",
   "uid": "1_1B9TMnk",
-  "version": 23
+  "version": 27
 }

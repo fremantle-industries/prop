@@ -8,6 +8,12 @@
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
         "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
         "type": "dashboard"
       }
     ]
@@ -15,8 +21,8 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 15,
-  "iteration": 1623210295921,
+  "id": 3,
+  "iteration": 1629746070570,
   "links": [
     {
       "icon": "external link",
@@ -27,6 +33,20 @@
     }
   ],
   "panels": [
+    {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 143,
+      "panels": [],
+      "title": "Compare Rates",
+      "type": "row"
+    },
     {
       "aliasColors": {},
       "bars": false,
@@ -39,7 +59,7 @@
         "h": 18,
         "w": 24,
         "x": 0,
-        "y": 0
+        "y": 1
       },
       "hiddenSeries": false,
       "id": 2,
@@ -59,7 +79,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -139,6 +159,251 @@
       }
     },
     {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 19
+      },
+      "id": 145,
+      "panels": [],
+      "title": "Individual Rates",
+      "type": "row"
+    },
+    {
+      "datasource": "Prop TimescaleDB",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "bars",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "positive_apr_rate"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 21,
+        "x": 0,
+        "y": 20
+      },
+      "id": 139,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  lending_rates.time,\n  lending_rates.venue || ':' || lending_rates.token AS text,\n  lending_rates.rate * 24 * 365 * 100 AS positive_apr_rate\nFROM lending_rates\n  LEFT JOIN products ON products.base = lending_rates.base AND products.quote = lending_rates.quote AND products.venue = lending_rates.venue AND products.type = 'spot'\n  LEFT JOIN tokens ON tokens.symbol = products.base\nWHERE\n  $__timeFilter(lending_rates.time)\n  AND products.base IN($token)\n  AND lending_rates.rate >= 0\nORDER BY time ASC, positive_apr_rate DESC",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        },
+        {
+          "format": "time_series",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  lending_rates.time,\n  lending_rates.venue || ':' || lending_rates.token AS text,\n  lending_rates.rate * 24 * 365 * 100 AS negative_apr_rate\nFROM lending_rates\n  LEFT JOIN products ON products.base = lending_rates.base AND products.quote = lending_rates.quote AND products.venue = lending_rates.venue AND products.type = 'spot'\n  LEFT JOIN tokens ON tokens.symbol = products.base\nWHERE\n  $__timeFilter(lending_rates.time)\n  AND products.base IN($token)\n  AND lending_rates.rate < 0\nORDER BY time ASC, negative_apr_rate DESC",
+          "refId": "B",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "$token APR",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "Prop TimescaleDB",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 3,
+        "x": 21,
+        "y": 20
+      },
+      "id": 141,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.0",
+      "targets": [
+        {
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  predicted_funding_rates.next_funding_time AS time,\n  predicted_funding_rates.venue || ':' || product AS text,\n  predicted_funding_rates.next_funding_rate * 24 * 365 * 100 AS rate\nFROM predicted_funding_rates\n  LEFT JOIN products ON products.symbol = predicted_funding_rates.product AND products.venue = predicted_funding_rates.venue AND products.type = 'swap'\n  LEFT JOIN tokens ON tokens.symbol = products.base\nWHERE\n  predicted_funding_rates.next_funding_time > DATE_TRUNC('hour', CURRENT_TIMESTAMP)\n  AND products.base IN($base)\nORDER BY time, rate DESC\nLIMIT 1",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "$token Predicted APR",
+      "type": "stat"
+    },
+    {
       "datasource": "Prop TimescaleDB",
       "fieldConfig": {
         "defaults": {
@@ -165,7 +430,7 @@
         "h": 4,
         "w": 4,
         "x": 0,
-        "y": 18
+        "y": 27
       },
       "id": 18,
       "options": {
@@ -180,7 +445,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -241,7 +506,7 @@
         "h": 4,
         "w": 5,
         "x": 4,
-        "y": 18
+        "y": 27
       },
       "id": 19,
       "options": {
@@ -256,7 +521,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -315,7 +580,7 @@
         "h": 4,
         "w": 5,
         "x": 9,
-        "y": 18
+        "y": 27
       },
       "id": 20,
       "options": {
@@ -330,7 +595,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -389,7 +654,7 @@
         "h": 4,
         "w": 5,
         "x": 14,
-        "y": 18
+        "y": 27
       },
       "id": 21,
       "options": {
@@ -404,7 +669,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -465,7 +730,7 @@
         "h": 4,
         "w": 5,
         "x": 19,
-        "y": 18
+        "y": 27
       },
       "id": 12,
       "options": {
@@ -480,7 +745,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -539,7 +804,7 @@
         "h": 4,
         "w": 4,
         "x": 0,
-        "y": 22
+        "y": 31
       },
       "id": 4,
       "options": {
@@ -554,7 +819,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -615,7 +880,7 @@
         "h": 4,
         "w": 5,
         "x": 4,
-        "y": 22
+        "y": 31
       },
       "id": 6,
       "options": {
@@ -630,7 +895,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -689,7 +954,7 @@
         "h": 4,
         "w": 5,
         "x": 9,
-        "y": 22
+        "y": 31
       },
       "id": 8,
       "options": {
@@ -704,7 +969,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -763,7 +1028,7 @@
         "h": 4,
         "w": 5,
         "x": 14,
-        "y": 22
+        "y": 31
       },
       "id": 10,
       "options": {
@@ -778,7 +1043,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -839,7 +1104,7 @@
         "h": 4,
         "w": 5,
         "x": 19,
-        "y": 22
+        "y": 31
       },
       "id": 22,
       "options": {
@@ -854,7 +1119,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -913,7 +1178,7 @@
         "h": 4,
         "w": 4,
         "x": 0,
-        "y": 26
+        "y": 35
       },
       "id": 13,
       "options": {
@@ -928,7 +1193,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -989,7 +1254,7 @@
         "h": 4,
         "w": 5,
         "x": 4,
-        "y": 26
+        "y": 35
       },
       "id": 14,
       "options": {
@@ -1004,7 +1269,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -1063,7 +1328,7 @@
         "h": 4,
         "w": 5,
         "x": 9,
-        "y": 26
+        "y": 35
       },
       "id": 15,
       "options": {
@@ -1078,7 +1343,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -1137,7 +1402,7 @@
         "h": 4,
         "w": 5,
         "x": 14,
-        "y": 26
+        "y": 35
       },
       "id": 16,
       "options": {
@@ -1152,7 +1417,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -1213,7 +1478,7 @@
         "h": 4,
         "w": 5,
         "x": 19,
-        "y": 26
+        "y": 35
       },
       "id": 17,
       "options": {
@@ -1228,7 +1493,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -1287,7 +1552,7 @@
         "h": 4,
         "w": 4,
         "x": 0,
-        "y": 30
+        "y": 39
       },
       "id": 23,
       "options": {
@@ -1302,7 +1567,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -1363,7 +1628,7 @@
         "h": 4,
         "w": 5,
         "x": 4,
-        "y": 30
+        "y": 39
       },
       "id": 24,
       "options": {
@@ -1378,7 +1643,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -1437,7 +1702,7 @@
         "h": 4,
         "w": 5,
         "x": 9,
-        "y": 30
+        "y": 39
       },
       "id": 25,
       "options": {
@@ -1452,7 +1717,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -1511,7 +1776,7 @@
         "h": 4,
         "w": 5,
         "x": 14,
-        "y": 30
+        "y": 39
       },
       "id": 26,
       "options": {
@@ -1526,7 +1791,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -1587,7 +1852,7 @@
         "h": 4,
         "w": 5,
         "x": 19,
-        "y": 30
+        "y": 39
       },
       "id": 27,
       "options": {
@@ -1602,7 +1867,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -1661,7 +1926,7 @@
         "h": 4,
         "w": 4,
         "x": 0,
-        "y": 34
+        "y": 43
       },
       "id": 28,
       "options": {
@@ -1676,7 +1941,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -1737,7 +2002,7 @@
         "h": 4,
         "w": 5,
         "x": 4,
-        "y": 34
+        "y": 43
       },
       "id": 29,
       "options": {
@@ -1752,7 +2017,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -1811,7 +2076,7 @@
         "h": 4,
         "w": 5,
         "x": 9,
-        "y": 34
+        "y": 43
       },
       "id": 30,
       "options": {
@@ -1826,7 +2091,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -1885,7 +2150,7 @@
         "h": 4,
         "w": 5,
         "x": 14,
-        "y": 34
+        "y": 43
       },
       "id": 31,
       "options": {
@@ -1900,7 +2165,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -1961,7 +2226,7 @@
         "h": 4,
         "w": 5,
         "x": 19,
-        "y": 34
+        "y": 43
       },
       "id": 32,
       "options": {
@@ -1976,7 +2241,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -2035,7 +2300,7 @@
         "h": 4,
         "w": 4,
         "x": 0,
-        "y": 38
+        "y": 47
       },
       "id": 33,
       "options": {
@@ -2050,7 +2315,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -2111,7 +2376,7 @@
         "h": 4,
         "w": 5,
         "x": 4,
-        "y": 38
+        "y": 47
       },
       "id": 34,
       "options": {
@@ -2126,7 +2391,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -2185,7 +2450,7 @@
         "h": 4,
         "w": 5,
         "x": 9,
-        "y": 38
+        "y": 47
       },
       "id": 35,
       "options": {
@@ -2200,7 +2465,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -2259,7 +2524,7 @@
         "h": 4,
         "w": 5,
         "x": 14,
-        "y": 38
+        "y": 47
       },
       "id": 36,
       "options": {
@@ -2274,7 +2539,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -2335,7 +2600,7 @@
         "h": 4,
         "w": 5,
         "x": 19,
-        "y": 38
+        "y": 47
       },
       "id": 37,
       "options": {
@@ -2350,7 +2615,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -2409,7 +2674,7 @@
         "h": 4,
         "w": 4,
         "x": 0,
-        "y": 42
+        "y": 51
       },
       "id": 38,
       "options": {
@@ -2424,7 +2689,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -2485,7 +2750,7 @@
         "h": 4,
         "w": 5,
         "x": 4,
-        "y": 42
+        "y": 51
       },
       "id": 39,
       "options": {
@@ -2500,7 +2765,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -2559,7 +2824,7 @@
         "h": 4,
         "w": 5,
         "x": 9,
-        "y": 42
+        "y": 51
       },
       "id": 40,
       "options": {
@@ -2574,7 +2839,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -2633,7 +2898,7 @@
         "h": 4,
         "w": 5,
         "x": 14,
-        "y": 42
+        "y": 51
       },
       "id": 41,
       "options": {
@@ -2648,7 +2913,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -2709,7 +2974,7 @@
         "h": 4,
         "w": 5,
         "x": 19,
-        "y": 42
+        "y": 51
       },
       "id": 42,
       "options": {
@@ -2724,7 +2989,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -2783,7 +3048,7 @@
         "h": 4,
         "w": 4,
         "x": 0,
-        "y": 46
+        "y": 55
       },
       "id": 43,
       "options": {
@@ -2798,7 +3063,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -2859,7 +3124,7 @@
         "h": 4,
         "w": 5,
         "x": 4,
-        "y": 46
+        "y": 55
       },
       "id": 44,
       "options": {
@@ -2874,7 +3139,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -2933,7 +3198,7 @@
         "h": 4,
         "w": 5,
         "x": 9,
-        "y": 46
+        "y": 55
       },
       "id": 45,
       "options": {
@@ -2948,7 +3213,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -3007,7 +3272,7 @@
         "h": 4,
         "w": 5,
         "x": 14,
-        "y": 46
+        "y": 55
       },
       "id": 46,
       "options": {
@@ -3022,7 +3287,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -3083,7 +3348,7 @@
         "h": 4,
         "w": 5,
         "x": 19,
-        "y": 46
+        "y": 55
       },
       "id": 47,
       "options": {
@@ -3098,7 +3363,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -3157,7 +3422,7 @@
         "h": 4,
         "w": 4,
         "x": 0,
-        "y": 50
+        "y": 59
       },
       "id": 48,
       "options": {
@@ -3172,7 +3437,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -3233,7 +3498,7 @@
         "h": 4,
         "w": 5,
         "x": 4,
-        "y": 50
+        "y": 59
       },
       "id": 49,
       "options": {
@@ -3248,7 +3513,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -3307,7 +3572,7 @@
         "h": 4,
         "w": 5,
         "x": 9,
-        "y": 50
+        "y": 59
       },
       "id": 50,
       "options": {
@@ -3322,7 +3587,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -3381,7 +3646,7 @@
         "h": 4,
         "w": 5,
         "x": 14,
-        "y": 50
+        "y": 59
       },
       "id": 51,
       "options": {
@@ -3396,7 +3661,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -3457,7 +3722,7 @@
         "h": 4,
         "w": 5,
         "x": 19,
-        "y": 50
+        "y": 59
       },
       "id": 52,
       "options": {
@@ -3472,7 +3737,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -3531,7 +3796,7 @@
         "h": 4,
         "w": 4,
         "x": 0,
-        "y": 54
+        "y": 63
       },
       "id": 53,
       "options": {
@@ -3546,7 +3811,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -3607,7 +3872,7 @@
         "h": 4,
         "w": 5,
         "x": 4,
-        "y": 54
+        "y": 63
       },
       "id": 54,
       "options": {
@@ -3622,7 +3887,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -3681,7 +3946,7 @@
         "h": 4,
         "w": 5,
         "x": 9,
-        "y": 54
+        "y": 63
       },
       "id": 55,
       "options": {
@@ -3696,7 +3961,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -3755,7 +4020,7 @@
         "h": 4,
         "w": 5,
         "x": 14,
-        "y": 54
+        "y": 63
       },
       "id": 56,
       "options": {
@@ -3770,7 +4035,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -3831,7 +4096,7 @@
         "h": 4,
         "w": 5,
         "x": 19,
-        "y": 54
+        "y": 63
       },
       "id": 57,
       "options": {
@@ -3846,7 +4111,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -3905,7 +4170,7 @@
         "h": 4,
         "w": 4,
         "x": 0,
-        "y": 58
+        "y": 67
       },
       "id": 58,
       "options": {
@@ -3920,7 +4185,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -3981,7 +4246,7 @@
         "h": 4,
         "w": 5,
         "x": 4,
-        "y": 58
+        "y": 67
       },
       "id": 59,
       "options": {
@@ -3996,7 +4261,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -4055,7 +4320,7 @@
         "h": 4,
         "w": 5,
         "x": 9,
-        "y": 58
+        "y": 67
       },
       "id": 60,
       "options": {
@@ -4070,7 +4335,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -4129,7 +4394,7 @@
         "h": 4,
         "w": 5,
         "x": 14,
-        "y": 58
+        "y": 67
       },
       "id": 61,
       "options": {
@@ -4144,7 +4409,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -4205,7 +4470,7 @@
         "h": 4,
         "w": 5,
         "x": 19,
-        "y": 58
+        "y": 67
       },
       "id": 62,
       "options": {
@@ -4220,7 +4485,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -4279,7 +4544,7 @@
         "h": 4,
         "w": 4,
         "x": 0,
-        "y": 62
+        "y": 71
       },
       "id": 63,
       "options": {
@@ -4294,7 +4559,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -4355,7 +4620,7 @@
         "h": 4,
         "w": 5,
         "x": 4,
-        "y": 62
+        "y": 71
       },
       "id": 64,
       "options": {
@@ -4370,7 +4635,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -4429,7 +4694,7 @@
         "h": 4,
         "w": 5,
         "x": 9,
-        "y": 62
+        "y": 71
       },
       "id": 65,
       "options": {
@@ -4444,7 +4709,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -4503,7 +4768,7 @@
         "h": 4,
         "w": 5,
         "x": 14,
-        "y": 62
+        "y": 71
       },
       "id": 66,
       "options": {
@@ -4518,7 +4783,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -4579,7 +4844,7 @@
         "h": 4,
         "w": 5,
         "x": 19,
-        "y": 62
+        "y": 71
       },
       "id": 67,
       "options": {
@@ -4594,7 +4859,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -4653,7 +4918,7 @@
         "h": 4,
         "w": 4,
         "x": 0,
-        "y": 66
+        "y": 75
       },
       "id": 68,
       "options": {
@@ -4668,7 +4933,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -4729,7 +4994,7 @@
         "h": 4,
         "w": 5,
         "x": 4,
-        "y": 66
+        "y": 75
       },
       "id": 69,
       "options": {
@@ -4744,7 +5009,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -4803,7 +5068,7 @@
         "h": 4,
         "w": 5,
         "x": 9,
-        "y": 66
+        "y": 75
       },
       "id": 70,
       "options": {
@@ -4818,7 +5083,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -4877,7 +5142,7 @@
         "h": 4,
         "w": 5,
         "x": 14,
-        "y": 66
+        "y": 75
       },
       "id": 71,
       "options": {
@@ -4892,7 +5157,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -4953,7 +5218,7 @@
         "h": 4,
         "w": 5,
         "x": 19,
-        "y": 66
+        "y": 75
       },
       "id": 72,
       "options": {
@@ -4968,7 +5233,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -5027,7 +5292,7 @@
         "h": 4,
         "w": 4,
         "x": 0,
-        "y": 70
+        "y": 79
       },
       "id": 73,
       "options": {
@@ -5042,7 +5307,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -5103,7 +5368,7 @@
         "h": 4,
         "w": 5,
         "x": 4,
-        "y": 70
+        "y": 79
       },
       "id": 74,
       "options": {
@@ -5118,7 +5383,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -5177,7 +5442,7 @@
         "h": 4,
         "w": 5,
         "x": 9,
-        "y": 70
+        "y": 79
       },
       "id": 75,
       "options": {
@@ -5192,7 +5457,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -5251,7 +5516,7 @@
         "h": 4,
         "w": 5,
         "x": 14,
-        "y": 70
+        "y": 79
       },
       "id": 76,
       "options": {
@@ -5266,7 +5531,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -5327,7 +5592,7 @@
         "h": 4,
         "w": 5,
         "x": 19,
-        "y": 70
+        "y": 79
       },
       "id": 77,
       "options": {
@@ -5342,7 +5607,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -5401,7 +5666,7 @@
         "h": 4,
         "w": 4,
         "x": 0,
-        "y": 74
+        "y": 83
       },
       "id": 78,
       "options": {
@@ -5416,7 +5681,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -5477,7 +5742,7 @@
         "h": 4,
         "w": 5,
         "x": 4,
-        "y": 74
+        "y": 83
       },
       "id": 79,
       "options": {
@@ -5492,7 +5757,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -5551,7 +5816,7 @@
         "h": 4,
         "w": 5,
         "x": 9,
-        "y": 74
+        "y": 83
       },
       "id": 80,
       "options": {
@@ -5566,7 +5831,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -5625,7 +5890,7 @@
         "h": 4,
         "w": 5,
         "x": 14,
-        "y": 74
+        "y": 83
       },
       "id": 81,
       "options": {
@@ -5640,7 +5905,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -5701,7 +5966,7 @@
         "h": 4,
         "w": 5,
         "x": 19,
-        "y": 74
+        "y": 83
       },
       "id": 82,
       "options": {
@@ -5716,7 +5981,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -5775,7 +6040,7 @@
         "h": 4,
         "w": 4,
         "x": 0,
-        "y": 78
+        "y": 87
       },
       "id": 83,
       "options": {
@@ -5790,7 +6055,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -5851,7 +6116,7 @@
         "h": 4,
         "w": 5,
         "x": 4,
-        "y": 78
+        "y": 87
       },
       "id": 84,
       "options": {
@@ -5866,7 +6131,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -5925,7 +6190,7 @@
         "h": 4,
         "w": 5,
         "x": 9,
-        "y": 78
+        "y": 87
       },
       "id": 85,
       "options": {
@@ -5940,7 +6205,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -5999,7 +6264,7 @@
         "h": 4,
         "w": 5,
         "x": 14,
-        "y": 78
+        "y": 87
       },
       "id": 86,
       "options": {
@@ -6014,7 +6279,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -6075,7 +6340,7 @@
         "h": 4,
         "w": 5,
         "x": 19,
-        "y": 78
+        "y": 87
       },
       "id": 87,
       "options": {
@@ -6090,7 +6355,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -6149,7 +6414,7 @@
         "h": 4,
         "w": 4,
         "x": 0,
-        "y": 82
+        "y": 91
       },
       "id": 88,
       "options": {
@@ -6164,7 +6429,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -6225,7 +6490,7 @@
         "h": 4,
         "w": 5,
         "x": 4,
-        "y": 82
+        "y": 91
       },
       "id": 89,
       "options": {
@@ -6240,7 +6505,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -6299,7 +6564,7 @@
         "h": 4,
         "w": 5,
         "x": 9,
-        "y": 82
+        "y": 91
       },
       "id": 90,
       "options": {
@@ -6314,7 +6579,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -6373,7 +6638,7 @@
         "h": 4,
         "w": 5,
         "x": 14,
-        "y": 82
+        "y": 91
       },
       "id": 91,
       "options": {
@@ -6388,7 +6653,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -6449,7 +6714,7 @@
         "h": 4,
         "w": 5,
         "x": 19,
-        "y": 82
+        "y": 91
       },
       "id": 92,
       "options": {
@@ -6464,7 +6729,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -6523,7 +6788,7 @@
         "h": 4,
         "w": 4,
         "x": 0,
-        "y": 86
+        "y": 95
       },
       "id": 93,
       "options": {
@@ -6538,7 +6803,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -6599,7 +6864,7 @@
         "h": 4,
         "w": 5,
         "x": 4,
-        "y": 86
+        "y": 95
       },
       "id": 94,
       "options": {
@@ -6614,7 +6879,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -6673,7 +6938,7 @@
         "h": 4,
         "w": 5,
         "x": 9,
-        "y": 86
+        "y": 95
       },
       "id": 95,
       "options": {
@@ -6688,7 +6953,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -6747,7 +7012,7 @@
         "h": 4,
         "w": 5,
         "x": 14,
-        "y": 86
+        "y": 95
       },
       "id": 96,
       "options": {
@@ -6762,7 +7027,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -6823,7 +7088,7 @@
         "h": 4,
         "w": 5,
         "x": 19,
-        "y": 86
+        "y": 95
       },
       "id": 97,
       "options": {
@@ -6838,7 +7103,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -6897,7 +7162,7 @@
         "h": 4,
         "w": 4,
         "x": 0,
-        "y": 90
+        "y": 99
       },
       "id": 98,
       "options": {
@@ -6912,7 +7177,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -6973,7 +7238,7 @@
         "h": 4,
         "w": 5,
         "x": 4,
-        "y": 90
+        "y": 99
       },
       "id": 99,
       "options": {
@@ -6988,7 +7253,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -7047,7 +7312,7 @@
         "h": 4,
         "w": 5,
         "x": 9,
-        "y": 90
+        "y": 99
       },
       "id": 100,
       "options": {
@@ -7062,7 +7327,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -7121,7 +7386,7 @@
         "h": 4,
         "w": 5,
         "x": 14,
-        "y": 90
+        "y": 99
       },
       "id": 101,
       "options": {
@@ -7136,7 +7401,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -7197,7 +7462,7 @@
         "h": 4,
         "w": 5,
         "x": 19,
-        "y": 90
+        "y": 99
       },
       "id": 102,
       "options": {
@@ -7212,7 +7477,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -7271,7 +7536,7 @@
         "h": 4,
         "w": 4,
         "x": 0,
-        "y": 94
+        "y": 103
       },
       "id": 103,
       "options": {
@@ -7286,7 +7551,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -7347,7 +7612,7 @@
         "h": 4,
         "w": 5,
         "x": 4,
-        "y": 94
+        "y": 103
       },
       "id": 104,
       "options": {
@@ -7362,7 +7627,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -7421,7 +7686,7 @@
         "h": 4,
         "w": 5,
         "x": 9,
-        "y": 94
+        "y": 103
       },
       "id": 105,
       "options": {
@@ -7436,7 +7701,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -7495,7 +7760,7 @@
         "h": 4,
         "w": 5,
         "x": 14,
-        "y": 94
+        "y": 103
       },
       "id": 106,
       "options": {
@@ -7510,7 +7775,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -7571,7 +7836,7 @@
         "h": 4,
         "w": 5,
         "x": 19,
-        "y": 94
+        "y": 103
       },
       "id": 107,
       "options": {
@@ -7586,7 +7851,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -7645,7 +7910,7 @@
         "h": 4,
         "w": 4,
         "x": 0,
-        "y": 98
+        "y": 107
       },
       "id": 108,
       "options": {
@@ -7660,7 +7925,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -7721,7 +7986,7 @@
         "h": 4,
         "w": 5,
         "x": 4,
-        "y": 98
+        "y": 107
       },
       "id": 109,
       "options": {
@@ -7736,7 +8001,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -7795,7 +8060,7 @@
         "h": 4,
         "w": 5,
         "x": 9,
-        "y": 98
+        "y": 107
       },
       "id": 110,
       "options": {
@@ -7810,7 +8075,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -7869,7 +8134,7 @@
         "h": 4,
         "w": 5,
         "x": 14,
-        "y": 98
+        "y": 107
       },
       "id": 111,
       "options": {
@@ -7884,7 +8149,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -7945,7 +8210,7 @@
         "h": 4,
         "w": 5,
         "x": 19,
-        "y": 98
+        "y": 107
       },
       "id": 112,
       "options": {
@@ -7960,7 +8225,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -8019,7 +8284,7 @@
         "h": 4,
         "w": 4,
         "x": 0,
-        "y": 102
+        "y": 111
       },
       "id": 113,
       "options": {
@@ -8034,7 +8299,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -8095,7 +8360,7 @@
         "h": 4,
         "w": 5,
         "x": 4,
-        "y": 102
+        "y": 111
       },
       "id": 114,
       "options": {
@@ -8110,7 +8375,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -8169,7 +8434,7 @@
         "h": 4,
         "w": 5,
         "x": 9,
-        "y": 102
+        "y": 111
       },
       "id": 115,
       "options": {
@@ -8184,7 +8449,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -8243,7 +8508,7 @@
         "h": 4,
         "w": 5,
         "x": 14,
-        "y": 102
+        "y": 111
       },
       "id": 116,
       "options": {
@@ -8258,7 +8523,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -8319,7 +8584,7 @@
         "h": 4,
         "w": 5,
         "x": 19,
-        "y": 102
+        "y": 111
       },
       "id": 117,
       "options": {
@@ -8334,7 +8599,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -8393,7 +8658,7 @@
         "h": 4,
         "w": 4,
         "x": 0,
-        "y": 106
+        "y": 115
       },
       "id": 121,
       "options": {
@@ -8408,7 +8673,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -8469,7 +8734,7 @@
         "h": 4,
         "w": 5,
         "x": 4,
-        "y": 106
+        "y": 115
       },
       "id": 122,
       "options": {
@@ -8484,7 +8749,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -8543,7 +8808,7 @@
         "h": 4,
         "w": 5,
         "x": 9,
-        "y": 106
+        "y": 115
       },
       "id": 123,
       "options": {
@@ -8558,7 +8823,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -8617,7 +8882,7 @@
         "h": 4,
         "w": 5,
         "x": 14,
-        "y": 106
+        "y": 115
       },
       "id": 124,
       "options": {
@@ -8632,7 +8897,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -8693,7 +8958,7 @@
         "h": 4,
         "w": 5,
         "x": 19,
-        "y": 106
+        "y": 115
       },
       "id": 125,
       "options": {
@@ -8708,7 +8973,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -8767,7 +9032,7 @@
         "h": 4,
         "w": 4,
         "x": 0,
-        "y": 110
+        "y": 119
       },
       "id": 120,
       "options": {
@@ -8782,7 +9047,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -8843,7 +9108,7 @@
         "h": 4,
         "w": 5,
         "x": 4,
-        "y": 110
+        "y": 119
       },
       "id": 126,
       "options": {
@@ -8858,7 +9123,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -8917,7 +9182,7 @@
         "h": 4,
         "w": 5,
         "x": 9,
-        "y": 110
+        "y": 119
       },
       "id": 127,
       "options": {
@@ -8932,7 +9197,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -8991,7 +9256,7 @@
         "h": 4,
         "w": 5,
         "x": 14,
-        "y": 110
+        "y": 119
       },
       "id": 128,
       "options": {
@@ -9006,7 +9271,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -9067,7 +9332,7 @@
         "h": 4,
         "w": 5,
         "x": 19,
-        "y": 110
+        "y": 119
       },
       "id": 129,
       "options": {
@@ -9082,7 +9347,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -9141,7 +9406,7 @@
         "h": 4,
         "w": 4,
         "x": 0,
-        "y": 114
+        "y": 123
       },
       "id": 118,
       "options": {
@@ -9156,7 +9421,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -9217,7 +9482,7 @@
         "h": 4,
         "w": 5,
         "x": 4,
-        "y": 114
+        "y": 123
       },
       "id": 130,
       "options": {
@@ -9232,7 +9497,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -9291,7 +9556,7 @@
         "h": 4,
         "w": 5,
         "x": 9,
-        "y": 114
+        "y": 123
       },
       "id": 131,
       "options": {
@@ -9306,7 +9571,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -9365,7 +9630,7 @@
         "h": 4,
         "w": 5,
         "x": 14,
-        "y": 114
+        "y": 123
       },
       "id": 132,
       "options": {
@@ -9380,7 +9645,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -9441,7 +9706,7 @@
         "h": 4,
         "w": 5,
         "x": 19,
-        "y": 114
+        "y": 123
       },
       "id": 133,
       "options": {
@@ -9456,7 +9721,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -9515,7 +9780,7 @@
         "h": 4,
         "w": 4,
         "x": 0,
-        "y": 118
+        "y": 127
       },
       "id": 119,
       "options": {
@@ -9530,7 +9795,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -9591,7 +9856,7 @@
         "h": 4,
         "w": 5,
         "x": 4,
-        "y": 118
+        "y": 127
       },
       "id": 134,
       "options": {
@@ -9606,7 +9871,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -9665,7 +9930,7 @@
         "h": 4,
         "w": 5,
         "x": 9,
-        "y": 118
+        "y": 127
       },
       "id": 135,
       "options": {
@@ -9680,7 +9945,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -9739,7 +10004,7 @@
         "h": 4,
         "w": 5,
         "x": 14,
-        "y": 118
+        "y": 127
       },
       "id": 136,
       "options": {
@@ -9754,7 +10019,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -9815,7 +10080,7 @@
         "h": 4,
         "w": 5,
         "x": 19,
-        "y": 118
+        "y": 127
       },
       "id": 137,
       "options": {
@@ -9830,7 +10095,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.0.0",
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
@@ -9866,7 +10131,8 @@
   "schemaVersion": 30,
   "style": "dark",
   "tags": [
-    "spot-lending-rates"
+    "spot-lending-rates",
+    "rates"
   ],
   "templating": {
     "list": [
@@ -9880,7 +10146,36 @@
         "datasource": "Prop TimescaleDB",
         "definition": "SELECT venue FROM lending_rates GROUP BY venue ORDER BY venue",
         "description": null,
-        "error": null,
+        "error": {
+          "config": {
+            "data": {
+              "from": "1629141270553",
+              "queries": [
+                {
+                  "datasourceId": 84,
+                  "format": "table",
+                  "rawSql": "SELECT venue FROM lending_rates GROUP BY venue ORDER BY venue",
+                  "refId": "venue"
+                }
+              ],
+              "to": "1629746070553"
+            },
+            "headers": {
+              "X-Grafana-Org-Id": 1
+            },
+            "hideFromInspector": false,
+            "method": "POST",
+            "requestId": "venue",
+            "retry": 0,
+            "url": "api/ds/query"
+          },
+          "data": {
+            "message": "Invalid data source ID"
+          },
+          "message": "Invalid data source ID",
+          "status": 400,
+          "statusText": "Bad Request"
+        },
         "hide": 0,
         "includeAll": true,
         "label": null,
@@ -9900,7 +10195,7 @@
       {
         "allValue": null,
         "current": {
-          "selected": false,
+          "selected": true,
           "text": [
             "All"
           ],
@@ -9911,7 +10206,36 @@
         "datasource": "Prop TimescaleDB",
         "definition": "SELECT tokens.symbol FROM tokens JOIN products ON products.base = tokens.symbol OR products.quote = tokens.symbol GROUP BY tokens.symbol ORDER BY tokens.symbol ASC",
         "description": null,
-        "error": null,
+        "error": {
+          "config": {
+            "data": {
+              "from": "1629141270554",
+              "queries": [
+                {
+                  "datasourceId": 84,
+                  "format": "table",
+                  "rawSql": "SELECT tokens.symbol FROM tokens JOIN products ON products.base = tokens.symbol OR products.quote = tokens.symbol GROUP BY tokens.symbol ORDER BY tokens.symbol ASC",
+                  "refId": "token"
+                }
+              ],
+              "to": "1629746070554"
+            },
+            "headers": {
+              "X-Grafana-Org-Id": 1
+            },
+            "hideFromInspector": false,
+            "method": "POST",
+            "requestId": "token",
+            "retry": 0,
+            "url": "api/ds/query"
+          },
+          "data": {
+            "message": "Invalid data source ID"
+          },
+          "message": "Invalid data source ID",
+          "status": 400,
+          "statusText": "Bad Request"
+        },
         "hide": 0,
         "includeAll": true,
         "label": null,
@@ -9938,5 +10262,5 @@
   "timezone": "",
   "title": "Spot Lending Rates",
   "uid": "97r3KPuMk",
-  "version": 15
+  "version": 3
 }

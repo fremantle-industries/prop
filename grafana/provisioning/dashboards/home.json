@@ -22,6 +22,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 9,
+  "iteration": 1629777790268,
   "links": [
     {
       "asDropdown": false,
@@ -61,23 +62,23 @@
     {
       "icon": "external link",
       "tags": [
-        "futures-premiums"
+        "candles"
       ],
       "type": "dashboards"
     },
     {
+      "asDropdown": true,
       "icon": "external link",
+      "includeVars": false,
+      "keepTime": false,
       "tags": [
-        "swap-funding-rates"
+        "rates"
       ],
-      "type": "dashboards"
-    },
-    {
-      "icon": "external link",
-      "tags": [
-        "spot-lending-rates"
-      ],
-      "type": "dashboards"
+      "targetBlank": false,
+      "title": "Rates",
+      "tooltip": "",
+      "type": "dashboards",
+      "url": ""
     },
     {
       "icon": "external link",
@@ -117,6 +118,53 @@
   ],
   "panels": [
     {
+      "collapsed": true,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 13,
+      "panels": [
+        {
+          "datasource": null,
+          "description": "",
+          "gridPos": {
+            "h": 5,
+            "w": 6,
+            "x": 0,
+            "y": 1
+          },
+          "id": 7,
+          "options": {
+            "content": "* [Bitcoin](http://grafana.localhost/d/1_1B9TMnk/station?orgId=1&var-token=17&var-venue=All&var-symbol=All&var-base=All&var-quote=busd&var-quote=tusd&var-quote=usd&var-quote=usdc&var-quote=usdt)\n* [Ethereum](http://grafana.localhost/d/1_1B9TMnk/station?orgId=1&var-token=33&var-venue=All&var-symbol=All&var-base=All&var-quote=busd&var-quote=tusd&var-quote=usd&var-quote=usdc&var-quote=usdt)",
+            "mode": "markdown"
+          },
+          "pluginVersion": "8.1.0",
+          "title": "Major Stations",
+          "type": "text"
+        }
+      ],
+      "title": "Trading Stations",
+      "type": "row"
+    },
+    {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 1
+      },
+      "id": 9,
+      "panels": [],
+      "title": "Price Comparison",
+      "type": "row"
+    },
+    {
       "datasource": "Prop TimescaleDB",
       "fieldConfig": {
         "defaults": {
@@ -124,7 +172,7 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "axisLabel": "",
+            "axisLabel": "BTC Price",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
@@ -151,6 +199,7 @@
               "mode": "off"
             }
           },
+          "decimals": 2,
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -164,15 +213,63 @@
                 "value": 80
               }
             ]
-          }
+          },
+          "unit": "currencyUSD"
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "close eth"
+            },
+            "properties": [
+              {
+                "id": "custom.axisPlacement",
+                "value": "right"
+              },
+              {
+                "id": "custom.axisLabel",
+                "value": "ETH Price"
+              },
+              {
+                "id": "unit",
+                "value": "prefix:$"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "dark-blue",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "close btc"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "orange",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
-        "h": 11,
+        "h": 23,
         "w": 24,
         "x": 0,
-        "y": 0
+        "y": 2
       },
       "id": 2,
       "options": {
@@ -191,35 +288,8 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  $__time(trades.time),\n  trades.price\nFROM\n  trades\nWHERE\n  $__timeFilter(trades.time)\n  AND trades.base = 'btc'\n  AND (trades.quote = 'usd' OR trades.quote = 'usdt' OR trades.quote = 'busd' OR trades.quote = 'usdc')\n  AND trades.product_type = 'spot'\n",
+          "rawSql": "SELECT\n  candles.time::timestamp,\n  candles.close,\n  products.base AS name\nFROM\n  candles\n  LEFT JOIN products ON candles.venue = products.venue AND candles.product = products.symbol\nWHERE\n  $__timeFilter(candles.time)\n  AND candles.period = '$period'::period_type\n  AND ((candles.venue = '$btc_venue' AND products.symbol = '$btc_symbol') OR (candles.venue = '$eth_venue' AND products.symbol = '$eth_symbol'))\nGROUP BY\n  candles.time,\n  candles.close,\n  products.base\nORDER BY candles.time ASC\n",
           "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "timeColumn": "time",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
-        },
-        {
-          "format": "time_series",
-          "group": [],
-          "hide": false,
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "SELECT\n  $__time(trades.time),\n  trades.price\nFROM\n  trades\nWHERE\n  $__timeFilter(trades.time)\n  AND trades.base = 'eth'\n  AND (trades.quote = 'usd' OR trades.quote = 'usdt' OR trades.quote = 'busd' OR trades.quote = 'usdc')\n  AND trades.product_type = 'spot'\n",
-          "refId": "B",
           "select": [
             [
               {
@@ -244,6 +314,20 @@
       "type": "timeseries"
     },
     {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 25
+      },
+      "id": 11,
+      "panels": [],
+      "title": "Gainers/Losers",
+      "type": "row"
+    },
+    {
       "datasource": "Prop TimescaleDB",
       "fieldConfig": {
         "defaults": {
@@ -253,30 +337,15 @@
           "custom": {
             "axisLabel": "",
             "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
+            "axisSoftMin": 0,
+            "fillOpacity": 80,
             "gradientMode": "none",
             "hideFrom": {
               "legend": false,
               "tooltip": false,
               "viz": false
             },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
+            "lineWidth": 1
           },
           "mappings": [],
           "thresholds": {
@@ -291,34 +360,43 @@
                 "value": 80
               }
             ]
-          }
+          },
+          "unit": "percent"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 11,
-        "w": 12,
+        "h": 13,
+        "w": 24,
         "x": 0,
-        "y": 11
+        "y": 26
       },
       "id": 4,
       "options": {
+        "barWidth": 0.97,
+        "groupWidth": 0.7,
         "legend": {
           "calcs": [],
-          "displayMode": "list",
+          "displayMode": "hidden",
           "placement": "bottom"
         },
+        "orientation": "auto",
+        "showValue": "auto",
+        "stacking": "none",
+        "text": {},
         "tooltip": {
           "mode": "single"
         }
       },
+      "pluginVersion": "8.1.0",
       "targets": [
         {
           "format": "time_series",
           "group": [],
+          "hide": false,
           "metricColumn": "none",
-          "rawQuery": false,
-          "rawSql": "SELECT\n  $__time(time_column),\n  value1\nFROM\n  metric_table\nWHERE\n  $__timeFilter(time_column)\n",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  DATE_TRUNC('hour', NOW()) - INTERVAL '24 HOURS' AS time,\n  start_candles.venue || ':' || start_candles.product AS text,\n  (end_candles.close - start_candles.open) / start_candles.open * 100 AS price_change_pct\nFROM (\n    SELECT\n      ranked_candles.time,\n      ranked_candles.venue,\n      ranked_candles.product,\n      ranked_candles.open,\n      ranked_candles.candle_rank\n    FROM (\n      SELECT\n        candles.time,\n        candles.venue,\n        candles.product,\n        candles.open,\n        dense_rank() OVER (\n          PARTITION BY candles.venue, candles.product\n          ORDER BY candles.time ASC\n        ) as candle_rank\n      FROM candles\n      WHERE candles.time >= DATE_TRUNC('hour', NOW()) - INTERVAL '24 HOURS'\n      ORDER BY\n        candles.venue,\n        candles.product,\n        candles.time\n      ) AS ranked_candles\n    WHERE ranked_candles.candle_rank = 1\n  ) AS start_candles\n  LEFT JOIN (\n    SELECT\n      ranked_candles.time,\n      ranked_candles.venue,\n      ranked_candles.product,\n      ranked_candles.close,\n      ranked_candles.candle_rank\n    FROM (\n      SELECT\n        candles.time,\n        candles.venue,\n        candles.product,\n        candles.close,\n        dense_rank() OVER (\n          PARTITION BY candles.venue, candles.product\n          ORDER BY candles.time DESC\n        ) as candle_rank\n      FROM candles\n      WHERE\n        candles.time >= DATE_TRUNC('hour', NOW()) - INTERVAL '24 HOURS'\n        AND candles.time <= DATE_TRUNC('hour', NOW())\n      ORDER BY\n        candles.venue,\n        candles.product,\n        candles.time\n      ) AS ranked_candles\n    WHERE ranked_candles.candle_rank = 1\n  ) AS end_candles ON end_candles.venue = start_candles.venue AND end_candles.product = start_candles.product\nORDER BY\n  price_change_pct ASC",
           "refId": "A",
           "select": [
             [
@@ -340,8 +418,33 @@
           ]
         }
       ],
-      "title": "Top 24hr Gainers",
-      "type": "timeseries"
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "24hr Gainer/Losers",
+      "transformations": [
+        {
+          "id": "reduce",
+          "options": {
+            "labelsToFields": false,
+            "reducers": [
+              "last"
+            ]
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "desc": false,
+                "field": "Last"
+              }
+            ]
+          }
+        }
+      ],
+      "type": "barchart"
     },
     {
       "datasource": "Prop TimescaleDB",
@@ -353,30 +456,15 @@
           "custom": {
             "axisLabel": "",
             "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
+            "axisSoftMin": 0,
+            "fillOpacity": 80,
             "gradientMode": "none",
             "hideFrom": {
               "legend": false,
               "tooltip": false,
               "viz": false
             },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
+            "lineWidth": 1
           },
           "mappings": [],
           "thresholds": {
@@ -391,23 +479,30 @@
                 "value": 80
               }
             ]
-          }
+          },
+          "unit": "percent"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 11,
-        "w": 12,
-        "x": 12,
-        "y": 11
+        "h": 13,
+        "w": 24,
+        "x": 0,
+        "y": 39
       },
-      "id": 5,
+      "id": 15,
       "options": {
+        "barWidth": 0.97,
+        "groupWidth": 0.7,
         "legend": {
           "calcs": [],
           "displayMode": "list",
           "placement": "bottom"
         },
+        "orientation": "auto",
+        "showValue": "auto",
+        "stacking": "none",
+        "text": {},
         "tooltip": {
           "mode": "single"
         }
@@ -417,8 +512,8 @@
           "format": "time_series",
           "group": [],
           "metricColumn": "none",
-          "rawQuery": false,
-          "rawSql": "SELECT\n  $__time(time_column),\n  value1\nFROM\n  metric_table\nWHERE\n  $__timeFilter(time_column)\n",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  DATE_TRUNC('hour', NOW()) - INTERVAL '168 HOURS' AS time,\n  start_candles.venue || ':' || start_candles.product AS text,\n  (end_candles.close - start_candles.open) / start_candles.open * 100 AS price_change_pct\nFROM (\n    SELECT\n      ranked_candles.time,\n      ranked_candles.venue,\n      ranked_candles.product,\n      ranked_candles.open,\n      ranked_candles.candle_rank\n    FROM (\n      SELECT\n        candles.time,\n        candles.venue,\n        candles.product,\n        candles.open,\n        dense_rank() OVER (\n          PARTITION BY candles.venue, candles.product\n          ORDER BY candles.time ASC\n        ) as candle_rank\n      FROM candles\n      WHERE candles.time >= DATE_TRUNC('hour', NOW()) - INTERVAL '168 HOURS'\n      ORDER BY\n        candles.venue,\n        candles.product,\n        candles.time\n      ) AS ranked_candles\n    WHERE ranked_candles.candle_rank = 1\n  ) AS start_candles\n  LEFT JOIN (\n    SELECT\n      ranked_candles.time,\n      ranked_candles.venue,\n      ranked_candles.product,\n      ranked_candles.close,\n      ranked_candles.candle_rank\n    FROM (\n      SELECT\n        candles.time,\n        candles.venue,\n        candles.product,\n        candles.close,\n        dense_rank() OVER (\n          PARTITION BY candles.venue, candles.product\n          ORDER BY candles.time DESC\n        ) as candle_rank\n      FROM candles\n      WHERE\n        candles.time >= DATE_TRUNC('hour', NOW()) - INTERVAL '168 HOURS'\n        AND candles.time <= DATE_TRUNC('hour', NOW())\n      ORDER BY\n        candles.venue,\n        candles.product,\n        candles.time\n      ) AS ranked_candles\n    WHERE ranked_candles.candle_rank = 1\n  ) AS end_candles ON end_candles.venue = start_candles.venue AND end_candles.product = start_candles.product\nORDER BY\n  price_change_pct ASC",
           "refId": "A",
           "select": [
             [
@@ -440,43 +535,230 @@
           ]
         }
       ],
-      "title": "Top 7d Gainers",
-      "type": "timeseries"
-    },
-    {
-      "datasource": null,
-      "description": "",
-      "gridPos": {
-        "h": 12,
-        "w": 6,
-        "x": 0,
-        "y": 22
-      },
-      "id": 7,
-      "options": {
-        "content": "* [Bitcoin](http://grafana.localhost/d/1_1B9TMnk/station?orgId=1&var-token=17&var-venue=All&var-symbol=All&var-base=All&var-quote=busd&var-quote=tusd&var-quote=usd&var-quote=usdc&var-quote=usdt)\n* [Ethereum](http://grafana.localhost/d/1_1B9TMnk/station?orgId=1&var-token=33&var-venue=All&var-symbol=All&var-base=All&var-quote=busd&var-quote=tusd&var-quote=usd&var-quote=usdc&var-quote=usdt)",
-        "mode": "markdown"
-      },
-      "pluginVersion": "8.1.0",
-      "title": "Major Stations",
-      "type": "text"
+      "title": "7d Gainers/Losers",
+      "transformations": [
+        {
+          "id": "reduce",
+          "options": {
+            "reducers": [
+              "last"
+            ]
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "field": "Last"
+              }
+            ]
+          }
+        }
+      ],
+      "type": "barchart"
     }
   ],
+  "refresh": "",
   "schemaVersion": 30,
   "style": "dark",
   "tags": [
     "home"
   ],
   "templating": {
-    "list": []
+    "list": [
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": "day_1",
+          "value": "day_1"
+        },
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "period",
+        "options": [
+          {
+            "selected": false,
+            "text": "min_1",
+            "value": "min_1"
+          },
+          {
+            "selected": false,
+            "text": "min_5",
+            "value": "min_5"
+          },
+          {
+            "selected": false,
+            "text": "min_15",
+            "value": "min_15"
+          },
+          {
+            "selected": false,
+            "text": "hour_1",
+            "value": "hour_1"
+          },
+          {
+            "selected": false,
+            "text": "hour_2",
+            "value": "hour_2"
+          },
+          {
+            "selected": false,
+            "text": "hour_3",
+            "value": "hour_3"
+          },
+          {
+            "selected": false,
+            "text": "hour_4",
+            "value": "hour_4"
+          },
+          {
+            "selected": false,
+            "text": "hour_6",
+            "value": "hour_6"
+          },
+          {
+            "selected": false,
+            "text": "hour_12",
+            "value": "hour_12"
+          },
+          {
+            "selected": true,
+            "text": "day_1",
+            "value": "day_1"
+          },
+          {
+            "selected": false,
+            "text": "week_1",
+            "value": "week_1"
+          },
+          {
+            "selected": false,
+            "text": "month_1",
+            "value": "month_1"
+          },
+          {
+            "selected": false,
+            "text": "year_1",
+            "value": "year_1"
+          }
+        ],
+        "query": "min_1,min_5,min_15,hour_1,hour_2,hour_3,hour_4,hour_6,hour_12,day_1,week_1,month_1,year_1",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": "ftx",
+          "value": "ftx"
+        },
+        "datasource": "Prop TimescaleDB",
+        "definition": "SELECT products.venue FROM products GROUP BY products.venue ORDER BY products.venue",
+        "description": "",
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "btc_venue",
+        "options": [],
+        "query": "SELECT products.venue FROM products GROUP BY products.venue ORDER BY products.venue",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": "btc/usd",
+          "value": "btc/usd"
+        },
+        "datasource": "Prop TimescaleDB",
+        "definition": "SELECT products.symbol FROM products WHERE products.base = 'btc' AND products.type = 'spot' GROUP BY products.symbol ORDER BY products.symbol",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "btc_symbol",
+        "options": [],
+        "query": "SELECT products.symbol FROM products WHERE products.base = 'btc' AND products.type = 'spot' GROUP BY products.symbol ORDER BY products.symbol",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": "ftx",
+          "value": "ftx"
+        },
+        "datasource": "Prop TimescaleDB",
+        "definition": "SELECT products.venue FROM products GROUP BY products.venue ORDER BY products.venue",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "eth_venue",
+        "options": [],
+        "query": "SELECT products.venue FROM products GROUP BY products.venue ORDER BY products.venue",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": "eth/usd",
+          "value": "eth/usd"
+        },
+        "datasource": "Prop TimescaleDB",
+        "definition": "SELECT products.symbol FROM products WHERE products.base = 'eth' AND products.type = 'spot' GROUP BY products.symbol ORDER BY products.symbol",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "eth_symbol",
+        "options": [],
+        "query": "SELECT products.symbol FROM products WHERE products.base = 'eth' AND products.type = 'spot' GROUP BY products.symbol ORDER BY products.symbol",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      }
+    ]
   },
   "time": {
-    "from": "now-24h",
+    "from": "now-30d",
     "to": "now"
   },
   "timepicker": {},
-  "timezone": "",
+  "timezone": "utc",
   "title": "Home",
   "uid": "YBJH3vM7k",
-  "version": 3
+  "version": 25
 }

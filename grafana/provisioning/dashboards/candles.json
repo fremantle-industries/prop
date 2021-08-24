@@ -1,0 +1,362 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "id": 15,
+  "iteration": 1629691099310,
+  "links": [
+    {
+      "asDropdown": false,
+      "icon": "external link",
+      "includeVars": false,
+      "keepTime": false,
+      "tags": [
+        "home"
+      ],
+      "targetBlank": false,
+      "title": "",
+      "tooltip": "",
+      "type": "dashboards",
+      "url": ""
+    }
+  ],
+  "panels": [
+    {
+      "datasource": "Prop TimescaleDB",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 28,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  $__time(candles.time),\n  candles.venue || ':' || candles.product AS product,\n  candles.close\nFROM\n  candles\n  LEFT JOIN products ON candles.venue = products.venue AND candles.product = products.symbol\nWHERE\n  $__timeFilter(candles.time)\n  AND candles.period = '$period'::period_type\n  AND candles.venue IN ($venue)\n  AND products.symbol IN ($symbol)\n  AND products.base IN ($base)\n  AND products.quote IN ($quote)\nORDER BY candles.time ASC\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Candles",
+      "type": "timeseries"
+    }
+  ],
+  "schemaVersion": 30,
+  "style": "dark",
+  "tags": [
+    "candles"
+  ],
+  "templating": {
+    "list": [
+      {
+        "allValue": null,
+        "current": {
+          "selected": true,
+          "text": "day_1",
+          "value": "day_1"
+        },
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "period",
+        "options": [
+          {
+            "selected": false,
+            "text": "min_1",
+            "value": "min_1"
+          },
+          {
+            "selected": false,
+            "text": "min_5",
+            "value": "min_5"
+          },
+          {
+            "selected": false,
+            "text": "min_15",
+            "value": "min_15"
+          },
+          {
+            "selected": false,
+            "text": "hour_1",
+            "value": "hour_1"
+          },
+          {
+            "selected": false,
+            "text": "hour_2",
+            "value": "hour_2"
+          },
+          {
+            "selected": false,
+            "text": "hour_3",
+            "value": "hour_3"
+          },
+          {
+            "selected": false,
+            "text": "hour_4",
+            "value": "hour_4"
+          },
+          {
+            "selected": false,
+            "text": "hour_6",
+            "value": "hour_6"
+          },
+          {
+            "selected": false,
+            "text": "hour_12",
+            "value": "hour_12"
+          },
+          {
+            "selected": true,
+            "text": "day_1",
+            "value": "day_1"
+          },
+          {
+            "selected": false,
+            "text": "week_1",
+            "value": "week_1"
+          },
+          {
+            "selected": false,
+            "text": "month_1",
+            "value": "month_1"
+          },
+          {
+            "selected": false,
+            "text": "year_1",
+            "value": "year_1"
+          }
+        ],
+        "query": "min_1,min_5,min_15,hour_1,hour_2,hour_3,hour_4,hour_6,hour_12,day_1,week_1,month_1,year_1",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": "Prop TimescaleDB",
+        "definition": "SELECT products.venue FROM products GROUP BY products.venue ORDER BY products.venue",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "venue",
+        "options": [],
+        "query": "SELECT products.venue FROM products GROUP BY products.venue ORDER BY products.venue",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": [
+            "btc/usd",
+            "btc/usdt"
+          ],
+          "value": [
+            "btc/usd",
+            "btc/usdt"
+          ]
+        },
+        "datasource": "Prop TimescaleDB",
+        "definition": "SELECT products.symbol FROM products GROUP BY products.symbol ORDER BY products.symbol",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "symbol",
+        "options": [],
+        "query": "SELECT products.symbol FROM products GROUP BY products.symbol ORDER BY products.symbol",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": "Prop TimescaleDB",
+        "definition": "SELECT products.base FROM products GROUP BY products.base ORDER BY products.base",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "base",
+        "options": [],
+        "query": "SELECT products.base FROM products GROUP BY products.base ORDER BY products.base",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": "Prop TimescaleDB",
+        "definition": "SELECT products.quote FROM products GROUP BY products.quote ORDER BY products.quote",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "quote",
+        "options": [],
+        "query": "SELECT products.quote FROM products GROUP BY products.quote ORDER BY products.quote",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-7d",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Candles",
+  "uid": "FLbzZXnnk",
+  "version": 4
+}
