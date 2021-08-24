@@ -48,6 +48,8 @@ password: password
 
 ## Prop - [http://prop.localhost](http://prop.localhost)
 
+![home](./docs/history-home.png)
+
 ![station](./docs/prop-station.png)
 
 ## Workbench - [http://workbench.localhost](http://workbench.localhost)
