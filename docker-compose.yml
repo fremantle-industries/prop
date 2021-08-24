@@ -79,7 +79,7 @@ services:
       - '--web.console.templates=/usr/share/prometheus/consoles'
 
   grafana:
-    image: 'grafana/grafana:8.1.0'
+    image: 'grafana/grafana:8.1.2'
     restart: always
     depends_on:
       - db
