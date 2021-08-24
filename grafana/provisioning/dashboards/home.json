@@ -67,6 +67,20 @@
       "type": "dashboards"
     },
     {
+      "asDropdown": false,
+      "icon": "external link",
+      "includeVars": false,
+      "keepTime": false,
+      "tags": [
+        "options"
+      ],
+      "targetBlank": false,
+      "title": "",
+      "tooltip": "",
+      "type": "dashboards",
+      "url": ""
+    },
+    {
       "asDropdown": true,
       "icon": "external link",
       "includeVars": false,
