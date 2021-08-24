@@ -1,0 +1,512 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 1,
+  "id": 21,
+  "iteration": 1629815237880,
+  "links": [
+    {
+      "asDropdown": false,
+      "icon": "external link",
+      "includeVars": false,
+      "keepTime": false,
+      "tags": [
+        "home"
+      ],
+      "targetBlank": false,
+      "title": "",
+      "tooltip": "",
+      "type": "dashboards",
+      "url": ""
+    }
+  ],
+  "panels": [
+    {
+      "datasource": "Prop TimescaleDB",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "Beta",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "bars",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "β"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 24,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 6,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "format": "time_series",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  benchmark.time,\n  beta.venue || ':' || beta.product AS text,\n  CASE  WHEN benchmark.price_change_pct=0 THEN 0\n        ELSE (beta.price_change_pct - benchmark.price_change_pct) / benchmark.price_change_pct\n  END AS beta\nFROM (\n    SELECT\n      candles.time,\n      candles.venue,\n      candles.product,\n      (candles.close - candles.open) / candles.open AS price_change_pct\n    FROM candles\n    WHERE\n      $__timeFilter(candles.time)\n      AND candles.period = '$period'::period_type\n      AND candles.product = '$benchmark_product'\n  ) benchmark\n  LEFT JOIN (\n    SELECT\n      candles.time,\n      candles.venue,\n      candles.product,\n      (candles.close - candles.open) / candles.open AS price_change_pct\n    FROM candles\n    WHERE\n      $__timeFilter(candles.time)\n      AND candles.period = '$period'::period_type\n      AND candles.product IN ($beta_product)\n  ) beta ON beta.time = benchmark.time\nORDER BY\n  benchmark.time;",
+          "refId": "B",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "$period Benchmark Betas",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "Prop TimescaleDB",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "Price Change",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "bars",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 27,
+        "w": 24,
+        "x": 0,
+        "y": 24
+      },
+      "id": 2,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  candles.time,\n  candles.venue || ':' || candles.product AS text,\n  (candles.close - candles.open) / candles.open * 100 AS price_change_pct\nFROM candles\nWHERE\n  $__timeFilter(candles.time)\n  AND candles.period = '$period'::period_type\n  AND (candles.product = '$benchmark_product' OR candles.product IN ($beta_product))\nORDER BY\n  candles.time,\n  candles.venue,\n  candles.product",
+          "refId": "Price Changes",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "$period Price Changes",
+      "type": "timeseries"
+    }
+  ],
+  "schemaVersion": 30,
+  "style": "dark",
+  "tags": [
+    "beta"
+  ],
+  "templating": {
+    "list": [
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": "Prop TimescaleDB",
+        "definition": "SELECT products.type FROM products GROUP BY products.type ORDER BY products.type ASC",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "benchmark_type",
+        "options": [],
+        "query": "SELECT products.type FROM products GROUP BY products.type ORDER BY products.type ASC",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": "btc",
+          "value": "btc"
+        },
+        "datasource": "Prop TimescaleDB",
+        "definition": "SELECT products.base FROM products WHERE products.type IN ($benchmark_type) ORDER BY products.base",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "base",
+        "options": [],
+        "query": "SELECT products.base FROM products WHERE products.type IN ($benchmark_type) ORDER BY products.base",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": [
+            "usd",
+            "usdt"
+          ],
+          "value": [
+            "usd",
+            "usdt"
+          ]
+        },
+        "datasource": "Prop TimescaleDB",
+        "definition": "SELECT products.quote FROM products WHERE products.type IN ($benchmark_type) AND products.base = '$base' ORDER BY products.symbol",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "quote",
+        "options": [],
+        "query": "SELECT products.quote FROM products WHERE products.type IN ($benchmark_type) AND products.base = '$base' ORDER BY products.symbol",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": "btc-perp",
+          "value": "btc-perp"
+        },
+        "datasource": "Prop TimescaleDB",
+        "definition": "SELECT products.symbol FROM products WHERE products.type IN ($benchmark_type) AND products.base = '$base' AND products.quote IN ($quote) ORDER BY products.symbol",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "benchmark_product",
+        "options": [],
+        "query": "SELECT products.symbol FROM products WHERE products.type IN ($benchmark_type) AND products.base = '$base' AND products.quote IN ($quote) ORDER BY products.symbol",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": "Prop TimescaleDB",
+        "definition": "SELECT products.type FROM products GROUP BY products.type ORDER BY products.type ASC",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "beta_type",
+        "options": [],
+        "query": "SELECT products.type FROM products GROUP BY products.type ORDER BY products.type ASC",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": [
+            "avax-perp",
+            "eth-perp",
+            "ada-perp"
+          ],
+          "value": [
+            "avax-perp",
+            "eth-perp",
+            "ada-perp"
+          ]
+        },
+        "datasource": "Prop TimescaleDB",
+        "definition": "SELECT products.symbol FROM products WHERE products.type IN ($beta_type) ORDER BY products.symbol ASC",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "beta_product",
+        "options": [],
+        "query": "SELECT products.symbol FROM products WHERE products.type IN ($beta_type) ORDER BY products.symbol ASC",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": true,
+          "text": "hour_1",
+          "value": "hour_1"
+        },
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "period",
+        "options": [
+          {
+            "selected": false,
+            "text": "min_1",
+            "value": "min_1"
+          },
+          {
+            "selected": false,
+            "text": "min_5",
+            "value": "min_5"
+          },
+          {
+            "selected": false,
+            "text": "min_15",
+            "value": "min_15"
+          },
+          {
+            "selected": true,
+            "text": "hour_1",
+            "value": "hour_1"
+          },
+          {
+            "selected": false,
+            "text": "hour_2",
+            "value": "hour_2"
+          },
+          {
+            "selected": false,
+            "text": "hour_3",
+            "value": "hour_3"
+          },
+          {
+            "selected": false,
+            "text": "hour_4",
+            "value": "hour_4"
+          },
+          {
+            "selected": false,
+            "text": "hour_6",
+            "value": "hour_6"
+          },
+          {
+            "selected": false,
+            "text": "hour_12",
+            "value": "hour_12"
+          },
+          {
+            "selected": false,
+            "text": "day_1",
+            "value": "day_1"
+          },
+          {
+            "selected": false,
+            "text": "week_1",
+            "value": "week_1"
+          },
+          {
+            "selected": false,
+            "text": "month_1",
+            "value": "month_1"
+          }
+        ],
+        "query": "min_1,min_5,min_15,hour_1,hour_2,hour_3,hour_4,hour_6,hour_12,day_1,week_1,month_1",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-7d",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Beta",
+  "uid": "62g8ooMnz",
+  "version": 4
+}
