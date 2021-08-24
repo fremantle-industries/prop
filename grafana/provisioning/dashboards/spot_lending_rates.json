@@ -30,6 +30,20 @@
         "home"
       ],
       "type": "dashboards"
+    },
+    {
+      "asDropdown": true,
+      "icon": "external link",
+      "includeVars": false,
+      "keepTime": false,
+      "tags": [
+        "rates"
+      ],
+      "targetBlank": false,
+      "title": "Rates",
+      "tooltip": "",
+      "type": "dashboards",
+      "url": ""
     }
   ],
   "panels": [

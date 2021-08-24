@@ -32,11 +32,18 @@
       "type": "dashboards"
     },
     {
+      "asDropdown": true,
       "icon": "external link",
+      "includeVars": false,
+      "keepTime": false,
       "tags": [
-        "funding-rates"
+        "rates"
       ],
-      "type": "dashboards"
+      "targetBlank": false,
+      "title": "Rates",
+      "tooltip": "",
+      "type": "dashboards",
+      "url": ""
     }
   ],
   "panels": [
