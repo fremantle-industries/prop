@@ -50,6 +50,8 @@ password: password
 
 ![home](./docs/history-home.png)
 
+![beta](./docs/beta-dashboard.png)
+
 ![station](./docs/prop-station.png)
 
 ## Workbench - [http://workbench.localhost](http://workbench.localhost)
