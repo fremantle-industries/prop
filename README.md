@@ -14,7 +14,7 @@ Add `prop` to your list of dependencies in `mix.exs`
 ```elixir
 def deps do
   [
-    {:prop, "~> 0.0.2"}
+    {:prop, "~> 0.0.3"}
   ]
 end
 ```
