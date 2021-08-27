@@ -54,6 +54,8 @@ password: password
 
 ![station](./docs/prop-station.png)
 
+![gainers-and-losers](./docs/gainers-and-losers.png)
+
 ## Workbench - [http://workbench.localhost](http://workbench.localhost)
 
 From idea to execution, manage your trading operation across a distributed cluster
