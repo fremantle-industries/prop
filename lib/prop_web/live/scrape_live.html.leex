@@ -1,0 +1,139 @@
+<h2 class="text-3xl">Scrapes</h2>
+
+<div class="mt-8">
+  <h3 class="text-2xl">
+    Latest
+  </h3>
+
+  <table class="w-full mt-4">
+    <thead class="bg-gray-200 border-t-2 border-gray-400">
+      <tr>
+        <th scope="col" class="px-4 py-3 text-left text-gray-700">Time</th>
+        <th scope="col" class="px-4 py-3 text-left text-gray-700">Product</th>
+        <th scope="col" class="px-4 py-3 text-left text-gray-700">Venue</th>
+        <th scope="col" class="px-4 py-3 text-left text-gray-700">Rate</th>
+      </tr>
+    </thead>
+    <tbody>
+      <%= if Enum.any?(@latest_scrapes) do %>
+        <%= for r <- @latest_scrapes do %>
+          <tr class="hover:bg-gray-50 border-t border-b group">
+            <td class="px-4 py-3"><%= r.next_funding_time %></td>
+            <td class="px-4 py-3"><%= r.product %></td>
+            <td class="px-4 py-3"><%= r.venue %></td>
+            <td class="px-4 py-3">TODO...</td>
+            <%# <td class="px-4 py-3"><%= History.PredictedFundingRates.PredictedFundingRate.rate_pct(r) %1>%</td> %>
+          </tr>
+        <% end %>
+      <% else %>
+        <tr class="hover:bg-gray-50 border-t border-b group">
+          <td colspan="4" class="px-4 py-3">No scrapes</td>
+        </tr>
+      <% end %>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="4" class="px-4 py-3 text-right">
+          <%= link "See more...", to: Routes.scrape_path(@socket, :index), class: "opacity-70 hover:opacity-50" %>
+        </td>
+      </tr>
+    </tfoot>
+  </table>
+</div>
+
+<div class="mt-4">
+  <h3 class="text-2xl">
+    Schedules
+  </h3>
+
+  <table class="w-full mt-4">
+    <thead class="bg-gray-200 border-t-2 border-gray-400">
+      <tr>
+        <th scope="col" class="px-4 py-3 text-left text-gray-700">Created At</th>
+        <th scope="col" class="px-4 py-3 text-left text-gray-700">Every</th>
+        <th scope="col" class="px-4 py-3 text-left text-gray-700">Products</th>
+        <th scope="col" class="px-4 py-3 text-left text-gray-700">Status</th>
+        <th scope="col" class="px-4 py-3 text-right text-gray-700">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <%= if Enum.any?(@job_schedules) do %>
+        <%= for s <- @job_schedules do %>
+          <tr class="hover:bg-gray-50 border-t border-b group">
+            <td class="px-4 py-3">TODO...</td>
+            <td class="px-4 py-3">TODO...</td>
+            <td class="px-4 py-3">TODO...</td>
+            <td class="px-4 py-3">TODO...</td>
+            <td class="px-4 py-3">
+              <span class="bg-yellow-50 text-yellow-400 py-2 px-4 inline-block rounded-full">pending</span>
+            </td>
+            <td class="px-4 py-3 text-right">
+              <button
+                type="button"
+                class="text-red-500 opacity-75 hover:opacity-100 invisible group-hover:visible"
+                phx-click="cancel"
+                phx-value-history-job-id="<%= s.id %>"
+              >
+                Cancel
+              </button>
+            </td>
+          </tr>
+        <% end %>
+      <% else %>
+        <tr class="hover:bg-gray-50 border-t border-b group">
+          <td colspan="7" class="px-4 py-3">No schedules</td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<div class="mt-8">
+  <h3 class="text-2xl">
+    Jobs
+  </h3>
+
+  <table class="w-full mt-4">
+    <thead class="bg-gray-200 border-t-2 border-gray-400">
+      <tr>
+        <th scope="col" class="px-4 py-3 text-left text-gray-700">ID</th>
+        <th scope="col" class="px-4 py-3 text-left text-gray-700">Created At</th>
+        <th scope="col" class="px-4 py-3 text-left text-gray-700">Products</th>
+        <th scope="col" class="px-4 py-3 text-left text-gray-700">Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <%= if Enum.any?(@jobs) do %>
+        <%= for j <- @jobs do %>
+          <tr class="hover:bg-gray-50 border-t border-b group">
+            <td class="px-4 py-3">
+              <%# <%= link j.id, to: Routes.predicted_funding_rate_job_path(@socket, :show, j.id), class: "hover:opacity-75" %1> %>
+              <%= link j.id, to: Routes.scrape_job_path(@socket, :show, j.id), class: "hover:opacity-75" %>
+            </td>
+            <td class="px-4 py-3"><%= j.inserted_at %></td>
+            <%# <td class="px-4 py-3" title="<%= products_by_group(j.products) %1>"> %>
+            <td class="px-4 py-3">
+              <%# <%= products_by_group(j.products, max_products: 3) %1> %>
+              TODO...
+            </td>
+            <td class="px-4 py-3">
+              <%# <%= render HistoryWeb.StatusView, "_pill.html", status: j.status %1> %>
+              TODO...
+            </td>
+          </tr>
+        <% end %>
+      <% else %>
+        <tr class="hover:bg-gray-50 border-t border-b group">
+          <td colspan="6" class="px-4 py-3">No scrape download jobs</td>
+        </tr>
+      <% end %>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="6" class="px-4 py-3 text-right">
+          <%= link "See more...", to: Routes.scrape_job_path(@socket, :index), class: "opacity-70 hover:opacity-50" %>
+        </td>
+      </tr>
+    </tfoot>
+  </table>
+</div>
