@@ -1629,6 +1629,10 @@ config :navigator,
         class: "text-4xl"
       },
       %{
+        label: "Scrapes",
+        link: {PropWeb.Router.Helpers, :scrape_path, [PropWeb.Endpoint, :index]}
+      },
+      %{
         label: "Workbench",
         link: {WorkbenchWeb.Router.Helpers, :balance_all_url, [WorkbenchWeb.Endpoint, :index]}
       },

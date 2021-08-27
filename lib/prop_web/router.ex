@@ -18,6 +18,8 @@ defmodule PropWeb.Router do
     pipe_through :browser
 
     live "/", HomeLive, :index
+    live "/scrapes", ScrapeLive, :index
+    live("/scrapes/jobs", ScrapeJob.IndexLive, :index, as: :scrape_job)
   end
 
   scope "/", NotifiedPhoenix do
