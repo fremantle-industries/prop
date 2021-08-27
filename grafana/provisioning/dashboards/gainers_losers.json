@@ -1,0 +1,331 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "id": 18,
+  "iteration": 1630089591199,
+  "links": [
+    {
+      "asDropdown": false,
+      "icon": "external link",
+      "includeVars": false,
+      "keepTime": false,
+      "tags": [
+        "home"
+      ],
+      "targetBlank": false,
+      "title": "",
+      "tooltip": "",
+      "type": "dashboards",
+      "url": ""
+    },
+    {
+      "asDropdown": true,
+      "icon": "external link",
+      "includeVars": false,
+      "keepTime": false,
+      "tags": [
+        "discovery"
+      ],
+      "targetBlank": false,
+      "title": "Discovery",
+      "tooltip": "",
+      "type": "dashboards",
+      "url": ""
+    }
+  ],
+  "panels": [
+    {
+      "datasource": "Prop TimescaleDB",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "axisSoftMin": 0,
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 24,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "barWidth": 0.97,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "hidden",
+          "placement": "bottom"
+        },
+        "orientation": "auto",
+        "showValue": "auto",
+        "stacking": "none",
+        "text": {},
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  DATE_TRUNC('hour', NOW()) - INTERVAL '24 HOURS' AS time,\n  start_candles.venue || ':' || start_candles.product AS text,\n  (end_candles.close - start_candles.open) / start_candles.open * 100 AS price_change_pct\nFROM (\n    SELECT\n      ranked_candles.time,\n      ranked_candles.venue,\n      ranked_candles.product,\n      ranked_candles.open,\n      ranked_candles.candle_rank\n    FROM (\n      SELECT\n        candles.time,\n        candles.venue,\n        candles.product,\n        candles.open,\n        dense_rank() OVER (\n          PARTITION BY candles.venue, candles.product\n          ORDER BY candles.time ASC\n        ) as candle_rank\n      FROM candles\n        LEFT JOIN products ON products.venue = candles.venue AND products.symbol = candles.product\n      WHERE\n        candles.time >= DATE_TRUNC('hour', NOW()) - INTERVAL '24 HOURS'\n        AND products.type IN ($type)\n      ORDER BY\n        candles.venue,\n        candles.product,\n        candles.time\n      ) AS ranked_candles\n    WHERE ranked_candles.candle_rank = 1\n  ) AS start_candles\n  LEFT JOIN (\n    SELECT\n      ranked_candles.time,\n      ranked_candles.venue,\n      ranked_candles.product,\n      ranked_candles.close,\n      ranked_candles.candle_rank\n    FROM (\n      SELECT\n        candles.time,\n        candles.venue,\n        candles.product,\n        candles.close,\n        dense_rank() OVER (\n          PARTITION BY candles.venue, candles.product\n          ORDER BY candles.time DESC\n        ) as candle_rank\n      FROM candles\n        LEFT JOIN products ON products.venue = candles.venue AND products.symbol = candles.product\n      WHERE\n        candles.time >= DATE_TRUNC('hour', NOW()) - INTERVAL '24 HOURS'\n        AND candles.time <= DATE_TRUNC('hour', NOW())\n        AND products.type IN ($type)\n      ORDER BY\n        candles.venue,\n        candles.product,\n        candles.time\n      ) AS ranked_candles\n    WHERE ranked_candles.candle_rank = 1\n  ) AS end_candles ON end_candles.venue = start_candles.venue AND end_candles.product = start_candles.product\nORDER BY\n  price_change_pct ASC",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "24hr Gainers/Losers",
+      "transformations": [
+        {
+          "id": "reduce",
+          "options": {
+            "reducers": [
+              "last"
+            ]
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "field": "Last"
+              }
+            ]
+          }
+        }
+      ],
+      "type": "barchart"
+    },
+    {
+      "datasource": "Prop TimescaleDB",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "axisSoftMin": 0,
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 27,
+        "w": 24,
+        "x": 0,
+        "y": 24
+      },
+      "id": 6,
+      "options": {
+        "barWidth": 0.97,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "hidden",
+          "placement": "bottom"
+        },
+        "orientation": "auto",
+        "showValue": "auto",
+        "stacking": "none",
+        "text": {},
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  DATE_TRUNC('hour', NOW()) - INTERVAL '168 HOURS' AS time,\n  start_candles.venue || ':' || start_candles.product AS text,\n  (end_candles.close - start_candles.open) / start_candles.open * 100 AS price_change_pct\nFROM (\n    SELECT\n      ranked_candles.time,\n      ranked_candles.venue,\n      ranked_candles.product,\n      ranked_candles.open,\n      ranked_candles.candle_rank\n    FROM (\n      SELECT\n        candles.time,\n        candles.venue,\n        candles.product,\n        candles.open,\n        dense_rank() OVER (\n          PARTITION BY candles.venue, candles.product\n          ORDER BY candles.time ASC\n        ) as candle_rank\n      FROM candles\n        LEFT JOIN products ON products.venue = candles.venue AND products.symbol = candles.product\n      WHERE\n        candles.time >= DATE_TRUNC('hour', NOW()) - INTERVAL '168 HOURS'\n        AND products.type IN ($type)\n      ORDER BY\n        candles.venue,\n        candles.product,\n        candles.time\n      ) AS ranked_candles\n    WHERE ranked_candles.candle_rank = 1\n  ) AS start_candles\n  LEFT JOIN (\n    SELECT\n      ranked_candles.time,\n      ranked_candles.venue,\n      ranked_candles.product,\n      ranked_candles.close,\n      ranked_candles.candle_rank\n    FROM (\n      SELECT\n        candles.time,\n        candles.venue,\n        candles.product,\n        candles.close,\n        dense_rank() OVER (\n          PARTITION BY candles.venue, candles.product\n          ORDER BY candles.time DESC\n        ) as candle_rank\n      FROM candles\n        LEFT JOIN products ON products.venue = candles.venue AND products.symbol = candles.product\n      WHERE\n        candles.time >= DATE_TRUNC('hour', NOW()) - INTERVAL '168 HOURS'\n        AND candles.time <= DATE_TRUNC('hour', NOW())\n        AND products.type IN ($type)\n      ORDER BY\n        candles.venue,\n        candles.product,\n        candles.time\n      ) AS ranked_candles\n    WHERE ranked_candles.candle_rank = 1\n  ) AS end_candles ON end_candles.venue = start_candles.venue AND end_candles.product = start_candles.product\nORDER BY\n  price_change_pct ASC",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "7d Gainers/Losers",
+      "transformations": [
+        {
+          "id": "reduce",
+          "options": {
+            "reducers": [
+              "last"
+            ]
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "field": "Last"
+              }
+            ]
+          }
+        }
+      ],
+      "type": "barchart"
+    }
+  ],
+  "schemaVersion": 30,
+  "style": "dark",
+  "tags": [
+    "gainers-losers",
+    "discovery"
+  ],
+  "templating": {
+    "list": [
+      {
+        "allValue": null,
+        "current": {
+          "selected": true,
+          "text": [
+            "swap"
+          ],
+          "value": [
+            "swap"
+          ]
+        },
+        "datasource": "Prop TimescaleDB",
+        "definition": "SELECT products.type FROM products GROUP BY products.type ORDER BY products.type ASC",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "type",
+        "options": [],
+        "query": "SELECT products.type FROM products GROUP BY products.type ORDER BY products.type ASC",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Gainers & Losers",
+  "uid": "L3ToOnVnz",
+  "version": 5
+}

@@ -109,7 +109,8 @@
   "schemaVersion": 30,
   "style": "dark",
   "tags": [
-    "spreads"
+    "spreads",
+    "discovery"
   ],
   "templating": {
     "list": []
