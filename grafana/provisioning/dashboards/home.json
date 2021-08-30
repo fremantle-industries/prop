@@ -109,13 +109,6 @@
       "url": ""
     },
     {
-      "icon": "external link",
-      "tags": [
-        "predictions"
-      ],
-      "type": "dashboards"
-    },
-    {
       "asDropdown": true,
       "icon": "external link",
       "includeVars": false,
