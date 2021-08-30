@@ -22,7 +22,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 18,
-  "iteration": 1630089591199,
+  "iteration": 1630344969477,
   "links": [
     {
       "asDropdown": false,
@@ -54,6 +54,344 @@
     }
   ],
   "panels": [
+    {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 8,
+      "panels": [],
+      "title": "Top",
+      "type": "row"
+    },
+    {
+      "datasource": "Prop TimescaleDB",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "red",
+            "mode": "fixed"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 14,
+        "w": 12,
+        "x": 0,
+        "y": 1
+      },
+      "id": 15,
+      "options": {
+        "displayMode": "gradient",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "showUnfilled": true,
+        "text": {}
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  losers.text,\n  losers.price_change_pct * -1\nFROM (\n  SELECT\n    DATE_TRUNC('hour', NOW()) - INTERVAL '6 HOURS' AS time,\n    start_candles.venue || ':' || start_candles.product AS text,\n    (end_candles.close - start_candles.open) / start_candles.open * 100 AS price_change_pct\n  FROM (\n      SELECT\n        ranked_candles.time,\n        ranked_candles.venue,\n        ranked_candles.product,\n        ranked_candles.open\n      FROM (\n        SELECT\n          candles.time,\n          candles.venue,\n          candles.product,\n          candles.open,\n          dense_rank() OVER (\n            PARTITION BY candles.venue, candles.product\n            ORDER BY candles.time ASC\n          ) as candle_rank\n        FROM candles\n          LEFT JOIN products ON products.venue = candles.venue AND products.symbol = candles.product\n        WHERE\n          candles.time >= DATE_TRUNC('hour', NOW()) - INTERVAL '6 HOURS'\n          AND candles.period = 'hour_1'::period_type\n          AND products.type IN ($type)\n        ORDER BY\n          candles.venue,\n          candles.product,\n          candles.time\n        ) AS ranked_candles\n      WHERE ranked_candles.candle_rank = 1\n    ) AS start_candles\n    LEFT JOIN (\n      SELECT\n        ranked_candles.time,\n        ranked_candles.venue,\n        ranked_candles.product,\n        ranked_candles.close\n      FROM (\n        SELECT\n          candles.time,\n          candles.venue,\n          candles.product,\n          candles.close,\n          dense_rank() OVER (\n            PARTITION BY candles.venue, candles.product\n            ORDER BY candles.time DESC\n          ) as candle_rank\n        FROM candles\n          LEFT JOIN products ON products.venue = candles.venue AND products.symbol = candles.product\n        WHERE\n          candles.time >= DATE_TRUNC('hour', NOW()) - INTERVAL '6 HOURS'\n          AND candles.time <= DATE_TRUNC('hour', NOW())\n          AND candles.period = 'hour_1'::period_type\n          AND products.type IN ($type)\n        ORDER BY\n          candles.venue,\n          candles.product,\n          candles.time\n        ) AS ranked_candles\n      WHERE ranked_candles.candle_rank = 1\n    ) AS end_candles ON end_candles.venue = start_candles.venue AND end_candles.product = start_candles.product\n    ORDER BY  price_change_pct ASC\n  ) losers\nWHERE losers.price_change_pct < 0\nLIMIT 10\n\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Top 6hr Losers",
+      "type": "bargauge"
+    },
+    {
+      "datasource": "Prop TimescaleDB",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 14,
+        "w": 12,
+        "x": 12,
+        "y": 1
+      },
+      "id": 16,
+      "options": {
+        "displayMode": "gradient",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "max"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "showUnfilled": true,
+        "text": {}
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  gainers.text,\n  gainers.price_change_pct\nFROM (\n  SELECT\n    DATE_TRUNC('hour', NOW()) - INTERVAL '6 HOURS' AS time,\n    start_candles.venue || ':' || start_candles.product AS text,\n    (end_candles.close - start_candles.open) / start_candles.open * 100 AS price_change_pct\n  FROM (\n      SELECT\n        ranked_candles.time,\n        ranked_candles.venue,\n        ranked_candles.product,\n        ranked_candles.open\n      FROM (\n        SELECT\n          candles.time,\n          candles.venue,\n          candles.product,\n          candles.open,\n          dense_rank() OVER (\n            PARTITION BY candles.venue, candles.product\n            ORDER BY candles.time ASC\n          ) as candle_rank\n        FROM candles\n          LEFT JOIN products ON products.venue = candles.venue AND products.symbol = candles.product\n        WHERE\n          candles.time >= DATE_TRUNC('hour', NOW()) - INTERVAL '6 HOURS'\n          AND candles.period = 'hour_1'::period_type\n          AND products.type IN ($type)\n        ORDER BY\n          candles.venue,\n          candles.product,\n          candles.time\n        ) AS ranked_candles\n      WHERE ranked_candles.candle_rank = 1\n    ) AS start_candles\n    LEFT JOIN (\n      SELECT\n        ranked_candles.time,\n        ranked_candles.venue,\n        ranked_candles.product,\n        ranked_candles.close\n      FROM (\n        SELECT\n          candles.time,\n          candles.venue,\n          candles.product,\n          candles.close,\n          dense_rank() OVER (\n            PARTITION BY candles.venue, candles.product\n            ORDER BY candles.time DESC\n          ) as candle_rank\n        FROM candles\n          LEFT JOIN products ON products.venue = candles.venue AND products.symbol = candles.product\n        WHERE\n          candles.time >= DATE_TRUNC('hour', NOW()) - INTERVAL '6 HOURS'\n          AND candles.time <= DATE_TRUNC('hour', NOW())\n          AND candles.period = 'hour_1'::period_type\n          AND products.type IN ($type)\n        ORDER BY\n          candles.venue,\n          candles.product,\n          candles.time\n        ) AS ranked_candles\n      WHERE ranked_candles.candle_rank = 1\n    ) AS end_candles ON end_candles.venue = start_candles.venue AND end_candles.product = start_candles.product\n    ORDER BY  price_change_pct DESC\n  ) gainers\nWHERE gainers.price_change_pct >= 0\nLIMIT 10\n\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Top 6hr Gainers",
+      "type": "bargauge"
+    },
+    {
+      "datasource": "Prop TimescaleDB",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "red",
+            "mode": "fixed"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 14,
+        "w": 12,
+        "x": 0,
+        "y": 15
+      },
+      "id": 12,
+      "options": {
+        "displayMode": "gradient",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "showUnfilled": true,
+        "text": {}
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  losers.text,\n  losers.price_change_pct * -1\nFROM (\n  SELECT\n    DATE_TRUNC('hour', NOW()) - INTERVAL '24 HOURS' AS time,\n    start_candles.venue || ':' || start_candles.product AS text,\n    (end_candles.close - start_candles.open) / start_candles.open * 100 AS price_change_pct\n  FROM (\n      SELECT\n        ranked_candles.time,\n        ranked_candles.venue,\n        ranked_candles.product,\n        ranked_candles.open\n      FROM (\n        SELECT\n          candles.time,\n          candles.venue,\n          candles.product,\n          candles.open,\n          dense_rank() OVER (\n            PARTITION BY candles.venue, candles.product\n            ORDER BY candles.time ASC\n          ) as candle_rank\n        FROM candles\n          LEFT JOIN products ON products.venue = candles.venue AND products.symbol = candles.product\n        WHERE\n          candles.time >= DATE_TRUNC('hour', NOW()) - INTERVAL '24 HOURS'\n          AND candles.period = 'hour_1'::period_type\n          AND products.type IN ($type)\n        ORDER BY\n          candles.venue,\n          candles.product,\n          candles.time\n        ) AS ranked_candles\n      WHERE ranked_candles.candle_rank = 1\n    ) AS start_candles\n    LEFT JOIN (\n      SELECT\n        ranked_candles.time,\n        ranked_candles.venue,\n        ranked_candles.product,\n        ranked_candles.close\n      FROM (\n        SELECT\n          candles.time,\n          candles.venue,\n          candles.product,\n          candles.close,\n          dense_rank() OVER (\n            PARTITION BY candles.venue, candles.product\n            ORDER BY candles.time DESC\n          ) as candle_rank\n        FROM candles\n          LEFT JOIN products ON products.venue = candles.venue AND products.symbol = candles.product\n        WHERE\n          candles.time >= DATE_TRUNC('hour', NOW()) - INTERVAL '24 HOURS'\n          AND candles.time <= DATE_TRUNC('hour', NOW())\n          AND candles.period = 'hour_1'::period_type\n          AND products.type IN ($type)\n        ORDER BY\n          candles.venue,\n          candles.product,\n          candles.time\n        ) AS ranked_candles\n      WHERE ranked_candles.candle_rank = 1\n    ) AS end_candles ON end_candles.venue = start_candles.venue AND end_candles.product = start_candles.product\n    ORDER BY  price_change_pct ASC\n  ) losers\nWHERE losers.price_change_pct < 0\nLIMIT 10\n\n\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Top 24hr Losers",
+      "type": "bargauge"
+    },
+    {
+      "datasource": "Prop TimescaleDB",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 14,
+        "w": 12,
+        "x": 12,
+        "y": 15
+      },
+      "id": 14,
+      "options": {
+        "displayMode": "gradient",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "showUnfilled": true,
+        "text": {}
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  gainers.text,\n  gainers.price_change_pct\nFROM (\n  SELECT\n    DATE_TRUNC('hour', NOW()) - INTERVAL '24 HOURS' AS time,\n    start_candles.venue || ':' || start_candles.product AS text,\n    (end_candles.close - start_candles.open) / start_candles.open * 100 AS price_change_pct\n  FROM (\n      SELECT\n        ranked_candles.time,\n        ranked_candles.venue,\n        ranked_candles.product,\n        ranked_candles.open\n      FROM (\n        SELECT\n          candles.time,\n          candles.venue,\n          candles.product,\n          candles.open,\n          dense_rank() OVER (\n            PARTITION BY candles.venue, candles.product\n            ORDER BY candles.time ASC\n          ) as candle_rank\n        FROM candles\n          LEFT JOIN products ON products.venue = candles.venue AND products.symbol = candles.product\n        WHERE\n          candles.time >= DATE_TRUNC('hour', NOW()) - INTERVAL '24 HOURS'\n          AND candles.period = 'hour_1'::period_type\n          AND products.type IN ($type)\n        ORDER BY\n          candles.venue,\n          candles.product,\n          candles.time\n        ) AS ranked_candles\n      WHERE ranked_candles.candle_rank = 1\n    ) AS start_candles\n    LEFT JOIN (\n      SELECT\n        ranked_candles.time,\n        ranked_candles.venue,\n        ranked_candles.product,\n        ranked_candles.close\n      FROM (\n        SELECT\n          candles.time,\n          candles.venue,\n          candles.product,\n          candles.close,\n          dense_rank() OVER (\n            PARTITION BY candles.venue, candles.product\n            ORDER BY candles.time DESC\n          ) as candle_rank\n        FROM candles\n          LEFT JOIN products ON products.venue = candles.venue AND products.symbol = candles.product\n        WHERE\n          candles.time >= DATE_TRUNC('hour', NOW()) - INTERVAL '24 HOURS'\n          AND candles.time <= DATE_TRUNC('hour', NOW())\n          AND candles.period = 'hour_1'::period_type\n          AND products.type IN ($type)\n        ORDER BY\n          candles.venue,\n          candles.product,\n          candles.time\n        ) AS ranked_candles\n      WHERE ranked_candles.candle_rank = 1\n    ) AS end_candles ON end_candles.venue = start_candles.venue AND end_candles.product = start_candles.product\n    ORDER BY  price_change_pct DESC\n  ) gainers\nWHERE gainers.price_change_pct >= 0\nLIMIT 10",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Top 24hr Gainers",
+      "type": "bargauge"
+    },
+    {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 29
+      },
+      "id": 10,
+      "panels": [],
+      "title": "Spectrum",
+      "type": "row"
+    },
     {
       "datasource": "Prop TimescaleDB",
       "fieldConfig": {
@@ -96,7 +434,7 @@
         "h": 24,
         "w": 24,
         "x": 0,
-        "y": 0
+        "y": 30
       },
       "id": 2,
       "options": {
@@ -121,7 +459,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  DATE_TRUNC('hour', NOW()) - INTERVAL '24 HOURS' AS time,\n  start_candles.venue || ':' || start_candles.product AS text,\n  (end_candles.close - start_candles.open) / start_candles.open * 100 AS price_change_pct\nFROM (\n    SELECT\n      ranked_candles.time,\n      ranked_candles.venue,\n      ranked_candles.product,\n      ranked_candles.open,\n      ranked_candles.candle_rank\n    FROM (\n      SELECT\n        candles.time,\n        candles.venue,\n        candles.product,\n        candles.open,\n        dense_rank() OVER (\n          PARTITION BY candles.venue, candles.product\n          ORDER BY candles.time ASC\n        ) as candle_rank\n      FROM candles\n        LEFT JOIN products ON products.venue = candles.venue AND products.symbol = candles.product\n      WHERE\n        candles.time >= DATE_TRUNC('hour', NOW()) - INTERVAL '24 HOURS'\n        AND products.type IN ($type)\n      ORDER BY\n        candles.venue,\n        candles.product,\n        candles.time\n      ) AS ranked_candles\n    WHERE ranked_candles.candle_rank = 1\n  ) AS start_candles\n  LEFT JOIN (\n    SELECT\n      ranked_candles.time,\n      ranked_candles.venue,\n      ranked_candles.product,\n      ranked_candles.close,\n      ranked_candles.candle_rank\n    FROM (\n      SELECT\n        candles.time,\n        candles.venue,\n        candles.product,\n        candles.close,\n        dense_rank() OVER (\n          PARTITION BY candles.venue, candles.product\n          ORDER BY candles.time DESC\n        ) as candle_rank\n      FROM candles\n        LEFT JOIN products ON products.venue = candles.venue AND products.symbol = candles.product\n      WHERE\n        candles.time >= DATE_TRUNC('hour', NOW()) - INTERVAL '24 HOURS'\n        AND candles.time <= DATE_TRUNC('hour', NOW())\n        AND products.type IN ($type)\n      ORDER BY\n        candles.venue,\n        candles.product,\n        candles.time\n      ) AS ranked_candles\n    WHERE ranked_candles.candle_rank = 1\n  ) AS end_candles ON end_candles.venue = start_candles.venue AND end_candles.product = start_candles.product\nORDER BY\n  price_change_pct ASC",
+          "rawSql": "SELECT\n  DATE_TRUNC('hour', NOW()) - INTERVAL '24 HOURS' AS time,\n  start_candles.venue || ':' || start_candles.product AS text,\n  (end_candles.close - start_candles.open) / start_candles.open * 100 AS price_change_pct\nFROM (\n    SELECT\n      ranked_candles.time,\n      ranked_candles.venue,\n      ranked_candles.product,\n      ranked_candles.open\n    FROM (\n      SELECT\n        candles.time,\n        candles.venue,\n        candles.product,\n        candles.open,\n        dense_rank() OVER (\n          PARTITION BY candles.venue, candles.product\n          ORDER BY candles.time ASC\n        ) as candle_rank\n      FROM candles\n        LEFT JOIN products ON products.venue = candles.venue AND products.symbol = candles.product\n      WHERE\n        candles.time >= DATE_TRUNC('hour', NOW()) - INTERVAL '24 HOURS'\n        AND candles.period = 'hour_1'::period_type\n        AND products.type IN ($type)\n      ORDER BY\n        candles.venue,\n        candles.product,\n        candles.time\n      ) AS ranked_candles\n    WHERE ranked_candles.candle_rank = 1\n  ) AS start_candles\n  LEFT JOIN (\n    SELECT\n      ranked_candles.time,\n      ranked_candles.venue,\n      ranked_candles.product,\n      ranked_candles.close\n    FROM (\n      SELECT\n        candles.time,\n        candles.venue,\n        candles.product,\n        candles.close,\n        dense_rank() OVER (\n          PARTITION BY candles.venue, candles.product\n          ORDER BY candles.time DESC\n        ) as candle_rank\n      FROM candles\n        LEFT JOIN products ON products.venue = candles.venue AND products.symbol = candles.product\n      WHERE\n        candles.time >= DATE_TRUNC('hour', NOW()) - INTERVAL '24 HOURS'\n        AND candles.time <= DATE_TRUNC('hour', NOW())\n        AND candles.period = 'hour_1'::period_type\n        AND products.type IN ($type)\n      ORDER BY\n        candles.venue,\n        candles.product,\n        candles.time\n      ) AS ranked_candles\n    WHERE ranked_candles.candle_rank = 1\n  ) AS end_candles ON end_candles.venue = start_candles.venue AND end_candles.product = start_candles.product\nORDER BY\n  price_change_pct ASC\n",
           "refId": "A",
           "select": [
             [
@@ -209,7 +547,7 @@
         "h": 27,
         "w": 24,
         "x": 0,
-        "y": 24
+        "y": 54
       },
       "id": 6,
       "options": {
@@ -234,7 +572,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  DATE_TRUNC('hour', NOW()) - INTERVAL '168 HOURS' AS time,\n  start_candles.venue || ':' || start_candles.product AS text,\n  (end_candles.close - start_candles.open) / start_candles.open * 100 AS price_change_pct\nFROM (\n    SELECT\n      ranked_candles.time,\n      ranked_candles.venue,\n      ranked_candles.product,\n      ranked_candles.open,\n      ranked_candles.candle_rank\n    FROM (\n      SELECT\n        candles.time,\n        candles.venue,\n        candles.product,\n        candles.open,\n        dense_rank() OVER (\n          PARTITION BY candles.venue, candles.product\n          ORDER BY candles.time ASC\n        ) as candle_rank\n      FROM candles\n        LEFT JOIN products ON products.venue = candles.venue AND products.symbol = candles.product\n      WHERE\n        candles.time >= DATE_TRUNC('hour', NOW()) - INTERVAL '168 HOURS'\n        AND products.type IN ($type)\n      ORDER BY\n        candles.venue,\n        candles.product,\n        candles.time\n      ) AS ranked_candles\n    WHERE ranked_candles.candle_rank = 1\n  ) AS start_candles\n  LEFT JOIN (\n    SELECT\n      ranked_candles.time,\n      ranked_candles.venue,\n      ranked_candles.product,\n      ranked_candles.close,\n      ranked_candles.candle_rank\n    FROM (\n      SELECT\n        candles.time,\n        candles.venue,\n        candles.product,\n        candles.close,\n        dense_rank() OVER (\n          PARTITION BY candles.venue, candles.product\n          ORDER BY candles.time DESC\n        ) as candle_rank\n      FROM candles\n        LEFT JOIN products ON products.venue = candles.venue AND products.symbol = candles.product\n      WHERE\n        candles.time >= DATE_TRUNC('hour', NOW()) - INTERVAL '168 HOURS'\n        AND candles.time <= DATE_TRUNC('hour', NOW())\n        AND products.type IN ($type)\n      ORDER BY\n        candles.venue,\n        candles.product,\n        candles.time\n      ) AS ranked_candles\n    WHERE ranked_candles.candle_rank = 1\n  ) AS end_candles ON end_candles.venue = start_candles.venue AND end_candles.product = start_candles.product\nORDER BY\n  price_change_pct ASC",
+          "rawSql": "SELECT\n  DATE_TRUNC('hour', NOW()) - INTERVAL '168 HOURS' AS time,\n  start_candles.venue || ':' || start_candles.product AS text,\n  (end_candles.close - start_candles.open) / start_candles.open * 100 AS price_change_pct\nFROM (\n    SELECT\n      ranked_candles.time,\n      ranked_candles.venue,\n      ranked_candles.product,\n      ranked_candles.open\n    FROM (\n      SELECT\n        candles.time,\n        candles.venue,\n        candles.product,\n        candles.open,\n        dense_rank() OVER (\n          PARTITION BY candles.venue, candles.product\n          ORDER BY candles.time ASC\n        ) as candle_rank\n      FROM candles\n        LEFT JOIN products ON products.venue = candles.venue AND products.symbol = candles.product\n      WHERE\n        candles.time >= DATE_TRUNC('hour', NOW()) - INTERVAL '168 HOURS'\n        AND candles.period = 'hour_1'::period_type\n        AND products.type IN ($type)\n      ORDER BY\n        candles.venue,\n        candles.product,\n        candles.time\n      ) AS ranked_candles\n    WHERE ranked_candles.candle_rank = 1\n  ) AS start_candles\n  LEFT JOIN (\n    SELECT\n      ranked_candles.time,\n      ranked_candles.venue,\n      ranked_candles.product,\n      ranked_candles.close\n    FROM (\n      SELECT\n        candles.time,\n        candles.venue,\n        candles.product,\n        candles.close,\n        dense_rank() OVER (\n          PARTITION BY candles.venue, candles.product\n          ORDER BY candles.time DESC\n        ) as candle_rank\n      FROM candles\n        LEFT JOIN products ON products.venue = candles.venue AND products.symbol = candles.product\n      WHERE\n        candles.time >= DATE_TRUNC('hour', NOW()) - INTERVAL '168 HOURS'\n        AND candles.time <= DATE_TRUNC('hour', NOW())\n        AND candles.period = 'hour_1'::period_type\n        AND products.type IN ($type)\n      ORDER BY\n        candles.venue,\n        candles.product,\n        candles.time\n      ) AS ranked_candles\n    WHERE ranked_candles.candle_rank = 1\n  ) AS end_candles ON end_candles.venue = start_candles.venue AND end_candles.product = start_candles.product\nORDER BY\n  price_change_pct ASC\n",
           "refId": "A",
           "select": [
             [
@@ -327,5 +665,5 @@
   "timezone": "",
   "title": "Gainers & Losers",
   "uid": "L3ToOnVnz",
-  "version": 5
+  "version": 14
 }

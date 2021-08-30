@@ -22,7 +22,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": 17,
-  "iteration": 1630115343850,
+  "iteration": 1630126637005,
   "links": [
     {
       "asDropdown": false,
@@ -107,7 +107,7 @@
       },
       "gridPos": {
         "h": 25,
-        "w": 24,
+        "w": 19,
         "x": 0,
         "y": 1
       },
@@ -150,8 +150,124 @@
           ]
         }
       ],
-      "title": "Close-Open (Delta) $period",
+      "title": "Delta (Close-Open) $period",
       "type": "timeseries"
+    },
+    {
+      "datasource": "Prop TimescaleDB",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "axisSoftMin": 0,
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 25,
+        "w": 5,
+        "x": 19,
+        "y": 1
+      },
+      "id": 18,
+      "options": {
+        "barWidth": 0.97,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "orientation": "horizontal",
+        "showValue": "auto",
+        "stacking": "none",
+        "text": {},
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  candles.time,\n  candles.venue || ':' || candles.product AS text,\n  (candles.close - candles.open) / candles.open * 100 AS price_change_pct\nFROM candles\nWHERE\n  $__timeFilter(candles.time)\n  AND candles.period = '$period'::period_type\n  AND (candles.product = '$benchmark_product' OR candles.product IN ($beta_product))\nORDER BY\n  candles.time,\n  candles.venue,\n  candles.product",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Timer Range Delta (Close-Open)",
+      "transformations": [
+        {
+          "id": "reduce",
+          "options": {
+            "reducers": [
+              "min",
+              "max"
+            ]
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "desc": true,
+                "field": "Max"
+              }
+            ]
+          }
+        }
+      ],
+      "type": "barchart"
     },
     {
       "datasource": "Prop TimescaleDB",
@@ -207,8 +323,8 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 23,
-        "w": 24,
+        "h": 22,
+        "w": 19,
         "x": 0,
         "y": 26
       },
@@ -251,8 +367,124 @@
           ]
         }
       ],
-      "title": "High-Low (Vol) $period",
+      "title": "Vol (High-Low) $period",
       "type": "timeseries"
+    },
+    {
+      "datasource": "Prop TimescaleDB",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "axisSoftMin": 0,
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 3
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 22,
+        "w": 5,
+        "x": 19,
+        "y": 26
+      },
+      "id": 19,
+      "options": {
+        "barWidth": 0.1,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "orientation": "horizontal",
+        "showValue": "auto",
+        "stacking": "none",
+        "text": {},
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  candles.time,\n  candles.venue || ':' || candles.product AS text,\n  (candles.high - candles.low) / candles.low * 100 AS price_range_pct\nFROM candles\nWHERE\n  $__timeFilter(candles.time)\n  AND candles.period = '$period'::period_type\n  AND (candles.product = '$benchmark_product' OR candles.product IN ($beta_product))\nORDER BY\n  candles.time,\n  candles.venue,\n  candles.product",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "High-Low (Vol) $period",
+      "transformations": [
+        {
+          "id": "reduce",
+          "options": {
+            "reducers": [
+              "first",
+              "last"
+            ]
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "desc": true,
+                "field": "Max"
+              }
+            ]
+          }
+        }
+      ],
+      "type": "barchart"
     },
     {
       "collapsed": false,
@@ -261,7 +493,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 49
+        "y": 48
       },
       "id": 8,
       "panels": [],
@@ -325,7 +557,7 @@
         "h": 18,
         "w": 12,
         "x": 0,
-        "y": 50
+        "y": 49
       },
       "id": 6,
       "options": {
@@ -427,7 +659,7 @@
         "h": 18,
         "w": 12,
         "x": 12,
-        "y": 50
+        "y": 49
       },
       "id": 12,
       "options": {
@@ -739,12 +971,12 @@
     ]
   },
   "time": {
-    "from": "now-24h",
-    "to": "now"
+    "from": "2021-08-27T19:10:39.894Z",
+    "to": "2021-08-27T23:18:58.007Z"
   },
   "timepicker": {},
   "timezone": "",
   "title": "Beta",
   "uid": "62g8ooMnz",
-  "version": 6
+  "version": 8
 }
