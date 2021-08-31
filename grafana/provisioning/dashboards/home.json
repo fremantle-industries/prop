@@ -22,7 +22,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": 14,
-  "iteration": 1630345422197,
+  "iteration": 1630376477112,
   "links": [
     {
       "asDropdown": false,
@@ -406,7 +406,7 @@
       },
       "gridPos": {
         "h": 12,
-        "w": 24,
+        "w": 20,
         "x": 0,
         "y": 22
       },
@@ -427,7 +427,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  candles.time,\n  candles.venue || ':' || candles.product AS text,\n  (candles.close - candles.open) / candles.open * 100 AS price_change_pct\nFROM candles\nWHERE\n  $__timeFilter(candles.time)\n  AND candles.period = '$period'::period_type\n  AND ((candles.venue = '$btc_venue' AND candles.product = '$btc_symbol') OR (candles.venue = '$eth_venue' AND candles.product = '$eth_symbol'))\nORDER BY\n  candles.time,\n  candles.venue,\n  candles.product",
+          "rawSql": "SELECT\n  candles.time,\n  candles.venue || ':' || candles.product AS text,\n  (candles.close - candles.open) / candles.open * 100 AS price_change_pct\nFROM candles\nWHERE\n  $__timeFilter(candles.time)\n  AND candles.period = 'hour_1'::period_type\n  AND ((candles.venue = '$btc_venue' AND candles.product = '$btc_symbol') OR (candles.venue = '$eth_venue' AND candles.product = '$eth_symbol'))\nORDER BY\n  candles.time,\n  candles.venue,\n  candles.product",
           "refId": "A",
           "select": [
             [
@@ -449,8 +449,105 @@
           ]
         }
       ],
-      "title": "$period BTC+ETH Performance",
+      "title": "Hourly BTC+ETH Performance",
       "type": "timeseries"
+    },
+    {
+      "datasource": "Prop TimescaleDB",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "axisSoftMin": 0,
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 12,
+        "w": 4,
+        "x": 20,
+        "y": 22
+      },
+      "id": 20,
+      "options": {
+        "barWidth": 0.97,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "orientation": "horizontal",
+        "showValue": "auto",
+        "stacking": "none",
+        "text": {
+          "valueSize": 20
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  btc_eth_performance.text,\n  btc_eth_performance.price_change_pct\nFROM (\n  SELECT\n    DATE_TRUNC('hour', NOW()) - INTERVAL '24 HOURS' AS time,\n    start_candles.venue || ':' || start_candles.product AS text,\n    (end_candles.close - start_candles.open) / start_candles.open * 100 AS price_change_pct\n  FROM (\n      SELECT\n        ranked_candles.time,\n        ranked_candles.venue,\n        ranked_candles.product,\n        ranked_candles.open\n      FROM (\n        SELECT\n          candles.time,\n          candles.venue,\n          candles.product,\n          candles.open,\n          dense_rank() OVER (\n            PARTITION BY candles.venue, candles.product\n            ORDER BY candles.time ASC\n          ) as candle_rank\n        FROM candles\n          LEFT JOIN products ON products.venue = candles.venue AND products.symbol = candles.product\n        WHERE\n          candles.time >= DATE_TRUNC('hour', NOW()) - INTERVAL '24 HOURS'\n          AND candles.period = 'hour_1'::period_type\n          AND ((products.venue = '$btc_venue' AND products.symbol = '$btc_symbol') OR (products.venue = '$eth_venue' AND products.symbol = '$eth_symbol'))\n        ORDER BY\n          candles.venue,\n          candles.product,\n          candles.time\n        ) AS ranked_candles\n      WHERE ranked_candles.candle_rank = 1\n    ) AS start_candles\n    LEFT JOIN (\n      SELECT\n        ranked_candles.time,\n        ranked_candles.venue,\n        ranked_candles.product,\n        ranked_candles.close\n      FROM (\n        SELECT\n          candles.time,\n          candles.venue,\n          candles.product,\n          candles.close,\n          dense_rank() OVER (\n            PARTITION BY candles.venue, candles.product\n            ORDER BY candles.time DESC\n          ) as candle_rank\n        FROM candles\n          LEFT JOIN products ON products.venue = candles.venue AND products.symbol = candles.product\n        WHERE\n          candles.time >= DATE_TRUNC('hour', NOW()) - INTERVAL '24 HOURS'\n          AND candles.time <= DATE_TRUNC('hour', NOW())\n          AND candles.period = 'hour_1'::period_type\n          AND ((products.venue = '$btc_venue' AND products.symbol = '$btc_symbol') OR (products.venue = '$eth_venue' AND products.symbol = '$eth_symbol'))\n        ORDER BY\n          candles.venue,\n          candles.product,\n          candles.time\n        ) AS ranked_candles\n      WHERE ranked_candles.candle_rank = 1\n    ) AS end_candles ON end_candles.venue = start_candles.venue AND end_candles.product = start_candles.product\n    ORDER BY  price_change_pct DESC\n  ) btc_eth_performance\n\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "24hr BTC+ETH Performance",
+      "type": "barchart"
     },
     {
       "collapsed": false,
@@ -848,11 +945,11 @@
   },
   "time": {
     "from": "now-30d",
-    "to": "now"
+    "to": "now+1d"
   },
   "timepicker": {},
   "timezone": "utc",
   "title": "Home",
   "uid": "YBJH3vM7k",
-  "version": 12
+  "version": 15
 }
