@@ -85,6 +85,7 @@ services:
       - db
     volumes:
       - grafana_data:/var/lib/grafana
+      - ./grafana/plugins:/var/lib/grafana/plugins
       - ./grafana/grafana.ini:/etc/grafana/grafana.ini
       - ./grafana/provisioning/:/etc/grafana/provisioning/
 

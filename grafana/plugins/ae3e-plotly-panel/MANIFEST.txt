@@ -1,0 +1,38 @@
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+{
+  "manifestVersion": "2.0.0",
+  "signatureType": "community",
+  "signedByOrg": "ae3e",
+  "signedByOrgName": "ae3e",
+  "plugin": "ae3e-plotly-panel",
+  "version": "0.4.0",
+  "time": 1619784080761,
+  "keyId": "7e4d0c6a708866e7",
+  "files": {
+    "CHANGELOG.md": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "editor.png": "158e968f971e6fc129c007867aa9a424d3674431452d3c83d4ff9ae7813d7e43",
+    "index.html": "2fa2c4168c5bb7b8502989f437e4a1a71e663702b0ec9c01530215c8c026dcaf",
+    "LICENSE": "e03ba41d7fab20700769fe4118bab50d800cb74f990353a05d2f5fff1c228363",
+    "logo.svg": "28f63778b318920c0ee492ff254912d61ae472854ab66d6ce6d505c2d1ed878e",
+    "module.js": "a6df8f6cf5792614b38d5e13fe275779a74ff1df81b1b3702188db0eee0981bf",
+    "module.js.LICENSE.txt": "99b8afca26f4f995419fd5646383cda95b92d0d5198974937e64935b0abb6c5b",
+    "module.js.map": "0e405847b044a4f42aa93ff3e9050d20049b63cbe747e720da7fa3fe34b058ca",
+    "panel.png": "ebd614120962a84bc6e6808fe6df3dec7ade38c8abb9181d49c229e0ccd2df96",
+    "plotly.svg": "d5ec9acca6416f4bc3161de6f203511cc8c02888b0eb6fef35cfa8c7f590c715",
+    "plugin.json": "e69ca826f1de905391fb5753c82b9a1b7c02b3aebe09d5d7a5f43df1e9173371",
+    "README.md": "4f7223d15533da0612ddcbf4dc54942cd4c19ac6e5ed5b99d476e6c9646f298c"
+  }
+}
+-----BEGIN PGP SIGNATURE-----
+Version: OpenPGP.js v4.10.1
+Comment: https://openpgpjs.org
+
+wqEEARMKAAYFAmCL8ZEACgkQfk0ManCIZucY4wIFHGLaqbnoT4/NA3lJO4H0
+n/rFjoTXd8KK4BHbRJKQlz/CYSoTOUTfGX9/oA1diot9Kfbd+95ugE2neZeM
+xmaW5OgCCQF0IV4v/qI5t40SPwSBKPCaPA9KNdy3MHV8rPtJwtuc2lha6u4S
+qx9izPKX9MB3+/XR8VXHsR+gM1qHIzSrxyfdHQ==
+=QtmM
+-----END PGP SIGNATURE-----
