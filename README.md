@@ -48,7 +48,7 @@ password: password
 
 ## Prop - [http://prop.localhost](http://prop.localhost)
 
-![home](./docs/history-home.png)
+![home](./docs/home-dashboard.png)
 
 ![beta](./docs/beta-dashboard.png)
 
