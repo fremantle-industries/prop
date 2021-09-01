@@ -21,8 +21,8 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 1,
-  "id": 15,
-  "iteration": 1629773470454,
+  "id": 1,
+  "iteration": 1630524313139,
   "links": [
     {
       "asDropdown": false,
@@ -249,7 +249,7 @@
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "bars",
-            "fillOpacity": 50,
+            "fillOpacity": 60,
             "gradientMode": "none",
             "hideFrom": {
               "legend": false,
@@ -260,7 +260,7 @@
             "lineStyle": {
               "fill": "solid"
             },
-            "lineWidth": 2,
+            "lineWidth": 1,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -401,7 +401,7 @@
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "bars",
-            "fillOpacity": 0,
+            "fillOpacity": 60,
             "gradientMode": "none",
             "hideFrom": {
               "legend": false,
@@ -502,7 +502,7 @@
       {
         "allValue": null,
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "Bitcoin",
           "value": "22"
         },
@@ -729,5 +729,5 @@
   "timezone": "",
   "title": "Station",
   "uid": "1_1B9TMnk",
-  "version": 27
+  "version": 1
 }
