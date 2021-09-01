@@ -22,7 +22,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": 14,
-  "iteration": 1630442856620,
+  "iteration": 1630461654027,
   "links": [
     {
       "asDropdown": false,
@@ -104,6 +104,20 @@
       ],
       "targetBlank": false,
       "title": "Discovery",
+      "tooltip": "",
+      "type": "dashboards",
+      "url": ""
+    },
+    {
+      "asDropdown": true,
+      "icon": "external link",
+      "includeVars": false,
+      "keepTime": false,
+      "tags": [
+        "execution"
+      ],
+      "targetBlank": false,
+      "title": "Execution",
       "tooltip": "",
       "type": "dashboards",
       "url": ""
@@ -620,7 +634,23 @@
           },
           "unit": "percent"
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "price_change_pct"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "yellow",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 10,
@@ -1046,7 +1076,7 @@
       {
         "allValue": null,
         "current": {
-          "selected": false,
+          "selected": true,
           "text": [
             "swap"
           ],
@@ -1081,5 +1111,5 @@
   "timezone": "utc",
   "title": "Home",
   "uid": "YBJH3vM7k",
-  "version": 19
+  "version": 21
 }

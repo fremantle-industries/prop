@@ -22,7 +22,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": 17,
-  "iteration": 1630126637005,
+  "iteration": 1630461311642,
   "links": [
     {
       "asDropdown": false,
@@ -34,6 +34,20 @@
       ],
       "targetBlank": false,
       "title": "",
+      "tooltip": "",
+      "type": "dashboards",
+      "url": ""
+    },
+    {
+      "asDropdown": true,
+      "icon": "external link",
+      "includeVars": false,
+      "keepTime": false,
+      "tags": [
+        "discovery"
+      ],
+      "targetBlank": false,
+      "title": "Discovery",
       "tooltip": "",
       "type": "dashboards",
       "url": ""
@@ -853,21 +867,29 @@
           "selected": false,
           "text": [
             "ada-perp",
+            "ar-perp",
             "avax-perp",
             "axs-perp",
             "c98-perp",
             "eth-perp",
+            "ftm-perp",
+            "mtl-perp",
             "sol-perp",
-            "ar-perp"
+            "tru-perp",
+            "yfii-perp"
           ],
           "value": [
             "ada-perp",
+            "ar-perp",
             "avax-perp",
             "axs-perp",
             "c98-perp",
             "eth-perp",
+            "ftm-perp",
+            "mtl-perp",
             "sol-perp",
-            "ar-perp"
+            "tru-perp",
+            "yfii-perp"
           ]
         },
         "datasource": "Prop TimescaleDB",
@@ -971,12 +993,12 @@
     ]
   },
   "time": {
-    "from": "2021-08-27T19:10:39.894Z",
-    "to": "2021-08-27T23:18:58.007Z"
+    "from": "now-2d",
+    "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "Beta",
   "uid": "62g8ooMnz",
-  "version": 8
+  "version": 11
 }

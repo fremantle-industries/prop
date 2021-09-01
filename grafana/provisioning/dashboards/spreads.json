@@ -8,6 +8,12 @@
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
         "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
         "type": "dashboard"
       }
     ]
@@ -15,7 +21,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": null,
+  "id": 8,
   "links": [
     {
       "asDropdown": false,
@@ -27,6 +33,20 @@
       ],
       "targetBlank": false,
       "title": "",
+      "tooltip": "",
+      "type": "dashboards",
+      "url": ""
+    },
+    {
+      "asDropdown": true,
+      "icon": "external link",
+      "includeVars": false,
+      "keepTime": false,
+      "tags": [
+        "execution"
+      ],
+      "targetBlank": false,
+      "title": "Execution",
       "tooltip": "",
       "type": "dashboards",
       "url": ""
@@ -110,7 +130,7 @@
   "style": "dark",
   "tags": [
     "spreads",
-    "discovery"
+    "execution"
   ],
   "templating": {
     "list": []
@@ -122,6 +142,6 @@
   "timepicker": {},
   "timezone": "",
   "title": "Spreads",
-  "uid": null,
-  "version": 0
+  "uid": "eYvdhWV7z",
+  "version": 2
 }
