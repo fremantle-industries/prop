@@ -1,0 +1,5 @@
+#! /bin/sh
+
+db_name="prop_${MIX_ENV:-dev}"
+# pg_dump -h localhost -U postgres $db_name > backups/db/foo.bak
+ts-dump --db-URI=postgresql://postgres@localhost/$db_name --dump-dir=./backups/db/
