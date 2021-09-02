@@ -33,7 +33,7 @@ defmodule Prop.MixProject do
       {:confex, "~> 3.5.0"},
       {:ecto_sql, "~> 3.4"},
       {:gettext, "~> 0.11"},
-      {:history, "~> 0.0.9"},
+      {:history, "~> 0.0.10"},
       {:jason, "~> 1.0"},
       {:libcluster, "~> 3.2"},
       {:livebook, "~> 0.2"},
@@ -68,8 +68,11 @@ defmodule Prop.MixProject do
 
   defp aliases do
     [
+      setup: ["setup.deps", "setup.tai", "setup.workbench", "setup.history", "ecto.setup"],
       "setup.deps": ["deps.get", "cmd npm install --prefix assets"],
-      setup: ["setup.deps", "ecto.setup"],
+      "setup.tai": ["tai.gen.migration"],
+      "setup.workbench": ["workbench.gen.migration"],
+      "setup.history": ["history.gen.migration"],
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"]

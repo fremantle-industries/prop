@@ -14,60 +14,59 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_HOST_AUTH_METHOD: trust
 
-  # web:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #     target: builder
-  #   depends_on:
-  #     - db
-  #   env_file:
-  #     - .env
-  #   ports:
-  #     - '4000:4000'
-  #     - "11000:4369"
-  #     - "11001:9999"
-  #   environment:
-  #     - "${MIX_ENV:-dev}"
-  #     - PORT
-  #     - HOST_PORT
-  #     - HOST
-  #     - PROP_SECRET_KEY_BASE
-  #     - PROP_LIVE_VIEW_SIGNING_SALT
-  #     - WORKBENCH_SECRET_KEY_BASE
-  #     - WORKBENCH_LIVE_VIEW_SIGNING_SALT
-  #     - HISTORY_SECRET_KEY_BASE
-  #     - HISTORY_LIVE_VIEW_SIGNING_SALT
-  #     - RUBE_SECRET_KEY_BASE
-  #     - RUBE_LIVE_VIEW_SIGNING_SALT
-  #     - SLURPEE_SECRET_KEY_BASE
-  #     - SLURPEE_LIVE_VIEW_SIGNING_SALT
-  #     - LIVEBOOK_SECRET_KEY_BASE
-  #     - LIVEBOOK_LIVE_VIEW_SIGNING_SALT
-  #     - BALANCE_SNAPSHOT_ENABLED
-  #     - BALANCE_SNAPSHOT_BTC_USD_VENUE
-  #     - BALANCE_SNAPSHOT_BTC_USD_SYMBOL
-  #     - BALANCE_SNAPSHOT_USD_QUOTE_VENUE
-  #     - BALANCE_SNAPSHOT_USD_QUOTE_ASSET
-  #     - DATABASE_URL
-  #   volumes:
-  #     - web_build:/app/_build
-  #     - ./mix.exs:/app/mix.exs
-  #     - ./mix.lock:/app/mix.lock
-  #     - ./assets/css:/app/assets/css
-  #     - ./assets/js:/app/assets/js
-  #     - ./assets/static:/app/assets/static
-  #     - ./assets/package.json:/app/assets/package.json
-  #     - ./assets/package-lock.json:/app/assets/package-lock.json
-  #     - ./assets/webpack.config.js:/app/assets/webpack.config.js
-  #     - ./assets/tsconfig.json:/app/assets/tsconfig.json
-  #     - ./config:/app/config
-  #     - ./lib:/app/lib
-  #     - ./priv/repo:/app/priv/repo
-  #   entrypoint: "sh -c 'mix setup.deps && mix phx.server'"
+  web:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      target: builder
+    depends_on:
+      - db
+    env_file:
+      - .env
+    ports:
+      - "${PROP_PROMETHEUS_METRICS_PORT:-9568}:${PROP_PROMETHEUS_METRICS_PORT:-9568}"
+      - "${WORKBENCH_PROMETHEUS_METRICS_PORT:-9569}:${WORKBENCH_PROMETHEUS_METRICS_PORT:-9569}"
+      - "${HISTORY_PROMETHEUS_METRICS_PORT:-9570}:${HISTORY_PROMETHEUS_METRICS_PORT:-9570}"
+    environment:
+      - DATABASE_URL=${DATABASE_URL:-ecto://postgres:postgres@db:5432/prop_?}
+      - HTTP_PORT
+      - PROP_SECRET_KEY_BASE
+      - PROP_LIVE_VIEW_SIGNING_SALT
+      - WORKBENCH_SECRET_KEY_BASE
+      - WORKBENCH_LIVE_VIEW_SIGNING_SALT
+      - HISTORY_SECRET_KEY_BASE
+      - HISTORY_LIVE_VIEW_SIGNING_SALT
+      - RUBE_SECRET_KEY_BASE
+      - RUBE_LIVE_VIEW_SIGNING_SALT
+      - SLURPEE_SECRET_KEY_BASE
+      - SLURPEE_LIVE_VIEW_SIGNING_SALT
+      - LIVEBOOK_SECRET_KEY_BASE
+      - LIVEBOOK_LIVE_VIEW_SIGNING_SALT
+      - BALANCE_SNAPSHOT_ENABLED
+      - BALANCE_SNAPSHOT_BTC_USD_VENUE
+      - BALANCE_SNAPSHOT_BTC_USD_SYMBOL
+      - BALANCE_SNAPSHOT_USD_QUOTE_VENUE
+      - BALANCE_SNAPSHOT_USD_QUOTE_ASSET
+    volumes:
+      - web_build:/app/_build
+      - web_deps:/app/deps
+      - web_asset_node_modules:/app/assets/node_modules
+      - ./mix.exs:/app/mix.exs
+      - ./mix.lock:/app/mix.lock
+      - ./assets/css:/app/assets/css
+      - ./assets/js:/app/assets/js
+      - ./assets/static:/app/assets/static
+      - ./assets/package.json:/app/assets/package.json
+      - ./assets/package-lock.json:/app/assets/package-lock.json
+      - ./assets/webpack.config.js:/app/assets/webpack.config.js
+      - ./assets/tsconfig.json:/app/assets/tsconfig.json
+      - ./config:/app/config
+      - ./lib:/app/lib
+      - ./priv/repo:/app/priv/repo
+    entrypoint: "sh -c 'mix setup.deps && elixir --sname prop -S mix phx.server'"
 
   prometheus:
-    image: 'prom/prometheus:v2.28.0'
+    image: 'prom/prometheus:v2.28.1'
     restart: always
     volumes:
       - prometheus_data:/prometheus
@@ -112,5 +111,7 @@ services:
 volumes:
   db_data:
   web_build:
+  web_deps:
+  web_asset_node_modules:
   prometheus_data:
   grafana_data:

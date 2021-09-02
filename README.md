@@ -21,19 +21,11 @@ end
 
 ## Usage
 
-You can run the app natively on the host `http://prop.localhost:4000`
-
 ```bash
-$ mix deps.get
-$ mix setup
-$ mix phx.server
+$ docker-compose up
 ```
 
-Or within `docker-compose` `http://prop.localhost`
-
-```bash
-docker-compose up
-```
+Visit [`prop.localhost`](http://prop.localhost)
 
 When running the application with `docker-compose` you will need to enter the basic auth development credentials:
 
@@ -104,6 +96,51 @@ A GUI frontend to manage blockchain ingestion with slurp
 * [grafana](https://grafana.com) - Dashboard Monitoring. Store & Visualize Your Metrics
 * [timescaledb](https://www.timescale.com) - Relational database for time-series data. Supercharged PostgreSQL
 * [prometheus](https://prometheus.io) - An open-source monitoring system with a dimensional data model, flexible query language, efficient time series database and modern alerting
+
+## Development
+
+Initial setup:
+
+- Installs `hex` and `npm` dependencies
+- Generates migrations for history, workbench and tai
+- Runs migrations
+- Seeds database
+
+```bash
+$ docker-compose up db
+$ mix setup
+$ mix phx.server
+```
+
+## Test
+
+```bash
+$ docker-compose up db
+$ mix test
+```
+
+## Ecto Database
+
+Reset drops the db, creates a new db & runs the migrations
+
+```bash
+$ mix ecto.reset
+```
+
+Migrate up
+
+```bash
+$ mix ecto.migrate
+```
+
+Migrate down
+
+```bash
+# Last migration
+$ mix ecto.rollback
+# Last 3 migrations
+$ mix ecto.rollback -n 3
+```
 
 ## Authors
 
