@@ -21,8 +21,8 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 19,
-  "iteration": 1630523345800,
+  "id": 20,
+  "iteration": 1630636911798,
   "links": [
     {
       "asDropdown": false,
@@ -279,8 +279,8 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
+            "drawStyle": "bars",
+            "fillOpacity": 60,
             "gradientMode": "none",
             "hideFrom": {
               "legend": false,
@@ -365,7 +365,7 @@
           ]
         }
       ],
-      "title": "Vol (High-Low) $period",
+      "title": "Delta Range Vol (High-Low) $period",
       "type": "timeseries"
     },
     {
@@ -616,30 +616,18 @@
       {
         "allValue": null,
         "current": {
-          "selected": true,
+          "selected": false,
           "text": [
-            "ada-perp",
             "ar-perp",
+            "ftt-perp",
             "avax-perp",
-            "axs-perp",
-            "c98-perp",
-            "eth-perp",
-            "ftm-perp",
-            "mtl-perp",
-            "sol-perp",
-            "tru-perp"
+            "sol-perp"
           ],
           "value": [
-            "ada-perp",
             "ar-perp",
+            "ftt-perp",
             "avax-perp",
-            "axs-perp",
-            "c98-perp",
-            "eth-perp",
-            "ftm-perp",
-            "mtl-perp",
-            "sol-perp",
-            "tru-perp"
+            "sol-perp"
           ]
         },
         "datasource": "Prop TimescaleDB",
@@ -750,5 +738,5 @@
   "timezone": "",
   "title": "Delta",
   "uid": "DBNMMfV7z",
-  "version": 3
+  "version": 2
 }
