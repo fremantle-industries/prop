@@ -29,6 +29,7 @@ defmodule Prop.MixProject do
   defp deps do
     [
       {:accessible, "~> 0.3"},
+      {:broadway_dashboard, "~> 0.1"},
       {:confex, "~> 3.5.0"},
       {:ecto_sql, "~> 3.4"},
       {:gettext, "~> 0.11"},
