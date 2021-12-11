@@ -1,5 +1,18 @@
 <h2 class="text-3xl">Home</h2>
 
 <div class="mt-8">
-  TODO...
+  <ul class="list-disc ml-8">
+    <li>
+      <%= link "Download historical data", to: "http://#{System.get_env("HISTORY_HOST")}" %>
+    </li>
+    <li>
+      <%= link "Manage your trading fleet", to: "http://#{System.get_env("WORKBENCH_HOST")}" %>
+    </li>
+    <li>
+      <%= link "Manage your blockchains", to: "http://#{System.get_env("SLURPEE_HOST")}" %>
+    </li>
+    <li>
+      <%= link "Visualize Data with Dashboards", to: "http://#{System.get_env("GRAFANA_HOST")}" %>
+    </li>
+  </ul>
 </div>

@@ -17,16 +17,17 @@ defmodule PropWeb.Router do
   scope "/", PropWeb do
     pipe_through :browser
 
-    live "/", HomeLive, :index
+    live_session :default do
+      live "/", HomeLive, :index
+    end
   end
 
   scope "/", NotifiedPhoenix do
     pipe_through :browser
 
-    live("/notifications", ListLive, :index,
-      as: :notification,
-      layout: {SlurpeeWeb.LayoutView, :root}
-    )
+    live_session :notifications, root_layout: {PropWeb.LayoutView, :root} do
+      live("/notifications", ListLive, :index, as: :notification)
+    end
   end
 
   # Enables LiveDashboard only for development

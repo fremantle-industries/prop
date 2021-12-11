@@ -9,7 +9,7 @@ open source libraries and tools for strategy research, execution and operation.
 
 ## Install
 
-Add `prop` to your list of dependencies in `mix.exs`
+1. Add `prop` to your list of dependencies in `mix.exs`
 
 ```elixir
 def deps do
@@ -19,7 +19,11 @@ def deps do
 end
 ```
 
-Copy `.env.example` -> `.env` to configure your application when running `docker-compose`.
+2. Copy `.env.example` -> `.env` to configure your application when running `docker-compose`
+
+3. Start the database `$ docker-compose up db`
+
+4. Install dependencies & create the database `$ mix setup`
 
 ## Usage
 
@@ -38,7 +42,7 @@ password: password
 
 ## Requirements
 
-`prop` requires Elixir 1.12+, Erlang/OTP 22+ & Rust.
+`prop` requires Elixir 1.13+, Erlang/OTP 22+ & Rust.
 
 We recommend using [`asdf`](https://github.com/asdf-vm/asdf) to manage the language requirements.
 

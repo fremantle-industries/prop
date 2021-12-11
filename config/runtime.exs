@@ -138,7 +138,7 @@ config :tai, Tai.Orders.OrderRepo,
   pool_size: 5
 
 config :tai, venues: %{}
-config :tai, advisor_groups: %{}
+config :tai, fleets: %{}
 
 # Rube
 config :rube,
@@ -1566,26 +1566,7 @@ config :livebook, LivebookWeb.Endpoint,
   live_view: [signing_salt: prop_live_view_signing_salt],
   server: false
 
-config :livebook, :root_path, Livebook.Config.root_path!("LIVEBOOK_ROOT_PATH")
-
-if password = Livebook.Config.password!("LIVEBOOK_PASSWORD") do
-  config :livebook, authentication_mode: :password, password: password
-else
-  config :livebook, token: Livebook.Utils.random_id()
-end
-
-if ip = Livebook.Config.ip!("LIVEBOOK_IP") do
-  config :livebook, LivebookWeb.Endpoint, http: [ip: ip]
-end
-
-config :livebook,
-       :cookie,
-       Livebook.Config.cookie!("LIVEBOOK_COOKIE") || Livebook.Utils.random_cookie()
-
-config :livebook,
-       :default_runtime,
-       Livebook.Config.default_runtime!("LIVEBOOK_DEFAULT_RUNTIME") ||
-         {Livebook.Runtime.ElixirStandalone, []}
+Livebook.config_runtime()
 
 # Master Proxy
 config :master_proxy,
@@ -1697,7 +1678,7 @@ config :navigator,
       },
       %{
         label: "Advisors",
-        link: {WorkbenchWeb.Router.Helpers, :advisor_path, [WorkbenchWeb.Endpoint, :index]}
+        link: {WorkbenchWeb.Router.Helpers, :fleet_path, [WorkbenchWeb.Endpoint, :index]}
       },
       %{
         label: "Prop",
@@ -1906,7 +1887,7 @@ config :notified_phoenix,
 # dev
 if config_env() == :dev do
   # Disable authentication mode during dev
-  config :livebook, :authentication_mode, :disabled
+  # config :livebook, :authentication_mode, :disabled
 
   # config :libcluster,
   #   topologies: [
