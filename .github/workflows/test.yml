@@ -16,11 +16,11 @@ jobs:
     strategy:
       matrix:
         otp: [22.x, 23.x, 24.x]
-        elixir: [1.12.x]
+        elixir: [1.13.x]
 
     services:
       db:
-        image: postgres:13.1
+        image: timescale/timescaledb:2.5.1-pg14
         ports:
           - 5432:5432
         env:
