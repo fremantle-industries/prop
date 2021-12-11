@@ -44,7 +44,13 @@ password: password
 
 ## Requirements
 
-`prop` requires Elixir 1.12+ & Erlang/OTP 22+
+`prop` requires Elixir 1.12+, Erlang/OTP 22+ & Rust.
+
+We recommend using [`asdf`](https://github.com/asdf-vm/asdf) to manage the language requirements.
+
+- [https://github.com/asdf-vm/asdf-erlang](https://github.com/asdf-vm/asdf-erlang)
+- [https://github.com/asdf-vm/asdf-elixir](https://github.com/asdf-vm/asdf-elixir)
+- [https://github.com/asdf-community/asdf-rust](https://github.com/asdf-community/asdf-rust)
 
 ## Prop - [http://prop.localhost](http://prop.localhost)
 
