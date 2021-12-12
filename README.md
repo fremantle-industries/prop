@@ -19,6 +19,8 @@ def deps do
 end
 ```
 
+Copy `.env.example` -> `.env` to configure your application when running `docker-compose`.
+
 ## Usage
 
 ```bash
