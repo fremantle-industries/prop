@@ -29,7 +29,7 @@
     "postcss": "^8.4.4",
     "postcss-import": "^14.0.2",
     "postcss-loader": "^6.2.1",
-    "postcss-preset-env": "^7.0.1",
+    "postcss-preset-env": "^7.0.2",
     "tailwindcss": "^2.2.19",
     "tailwindcss-empty-pseudo-class": "^1.0.0",
     "terser-webpack-plugin": "^5.2.5",
