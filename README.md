@@ -212,9 +212,9 @@ $ mix ecto.rollback -n 3
 
 **nginx: [emerg] host not found in upstream grafana**
 
-- Either run Grafana first with `docker compose up grafana` 
-followed by `docker compose up` OR run your normal
-`docker compose up` followed by `docker compose restart grafana`.
+- Either run Grafana first with `docker-compose up grafana` 
+followed by `docker-compose up` OR run your normal
+`docker-compose up` followed by `docker-compose restart grafana`.
 
 
 **(DBConnection.ConnectionError)**
