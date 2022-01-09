@@ -9,7 +9,11 @@ open source libraries and tools for strategy research, execution and operation.
 
 ## Install
 
-1. Install rust to build Rustler dependencies: `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`
+1. Install rust to build Rustler dependencies: 
+
+```bash
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+```
 
 2. Add `prop` to your list of dependencies in `mix.exs`
 
@@ -21,28 +25,32 @@ def deps do
 end
 ```
 
-3. Copy `.env.example` -> `.env` to configure your application when running `docker-compose`
+3. Copy `.env.example` -> `.env` to configure your application when running 
+`docker-compose`
 
-4. Start the database `$ docker-compose up db`
-
-5. Install dependencies & create the database `$ mix setup`
+4. Start the applications with docker `make start`
 
 ## Usage
 
-### Starting the server
+### Starting the server with docker
 
 ```bash
-$ docker-compose up
+$ make start
 ```
 
-Visit [prop.localhost](http://prop.localhost)
+Which will start the services outlined in [docker-compose.yml](docker-compose.yml).
 
-When running the application with `docker-compose` you will need to enter the basic auth development credentials:
+Visit [prop.localhost](http://prop.localhost).
+
+When running the application with `docker-compose` you will need to enter the 
+basic auth development credentials:
 
 ```
 username: admin
 password: password
 ```
+
+See the [Makefile](./Makefile) for more details on the individual commands run.
 
 ### Download your data with [History](https://github.com/fremantle-industries/history)
 
@@ -50,7 +58,8 @@ Before you can request to download candles you will need to import the products
 for a supported venue.
 
 Navigate to [history.localhost/products](http://history.localhost/products)
-and click on `Import` then wait for History to finish adding products from supported venues.
+and click on `Import` then wait for History to finish adding products from 
+supported venues.
 
 Go to [history.localhost/data/candles/jobs](http://history.localhost/data/candles/jobs)
 and input the products you would like to download data for. 
@@ -92,7 +101,8 @@ Node.
 
 `prop` requires Elixir 1.13+, Erlang/OTP 22+ & Rust.
 
-We recommend using [`asdf`](https://github.com/asdf-vm/asdf) to manage the language requirements.
+We recommend using [`asdf`](https://github.com/asdf-vm/asdf) to manage the 
+language requirements.
 
 - [https://github.com/asdf-vm/asdf-erlang](https://github.com/asdf-vm/asdf-erlang)
 - [https://github.com/asdf-vm/asdf-elixir](https://github.com/asdf-vm/asdf-elixir)
@@ -167,17 +177,18 @@ Initial setup:
 - Seeds database
 
 ```bash
-$ docker-compose up db
-$ mix setup
-$ mix phx.server
+$ make start_development
 ```
+
+See the [Makefile](./Makefile) for more details.
 
 ## Test
 
 ```bash
-$ docker-compose up db
-$ mix test
+$ make run_tests
 ```
+
+See the [Makefile](./Makefile) for more details.
 
 ## Ecto Database
 
