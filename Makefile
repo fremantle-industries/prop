@@ -1,6 +1,6 @@
 SHELL=/bin/bash
 
-run_tests:
+test:
 	echo "Running tests..."
 	docker-compose up --detach db
 	mix setup
