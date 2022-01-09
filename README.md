@@ -185,7 +185,7 @@ See the [Makefile](./Makefile) for more details.
 ## Test
 
 ```bash
-$ make run_tests
+$ make test
 ```
 
 See the [Makefile](./Makefile) for more details.
