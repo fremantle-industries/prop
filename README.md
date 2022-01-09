@@ -35,7 +35,7 @@ end
 $ docker-compose up
 ```
 
-Visit [`prop.localhost`](http://prop.localhost)
+Visit [prop.localhost](http://prop.localhost)
 
 When running the application with `docker-compose` you will need to enter the basic auth development credentials:
 
@@ -49,12 +49,12 @@ password: password
 Before you can request to download candles you will need to import the products
 for a supported venue.
 
-Navigate to http://history.localhost/products and click on `Import` then wait 
-for History to finish adding products from supported venues.
+Navigate to [history.localhost/products](http://history.localhost/products)
+and click on `Import` then wait for History to finish adding products from supported venues.
 
-Go to http://history.localhost/data/candles/jobs and input the products you
-would like to download data for. Click on `Download` and wait for the data to
-finish by watching the status column.
+Go to [history.localhost/data/candles/jobs](http://history.localhost/data/candles/jobs)
+and input the products you would like to download data for. 
+Click on `Download` and wait for the data to finish by watching the status column.
 
 **NOTE**: Only FTX based products will currently download. You can check
 availability of platforms on the history
@@ -64,7 +64,7 @@ availability of platforms on the history
 ### Visualize your data with [Grafana](https://grafana.com/)
 
 Navigate to
-[http://grafana.localhost/dashboards](http://grafana.localhost/dashboards)
+[grafana.localhost/dashboards](http://grafana.localhost/dashboards)
 and select `Candles` from the `General` folder.
 
 Set the period to min_1 or whatever timeframe you downloaded the candles to see
@@ -73,7 +73,7 @@ them plotted on a chart.
 
 ### Explore your data with [Livebook](https://github.com/livebook-dev/livebook)
 
-Navigate to [http://livebook.localhost/](http://livebook.localhost/) and open a
+Navigate to [livebook.localhost](http://livebook.localhost/) and open a
 notebook by clicking on `New notebook` at the top right.
 
 You can pull in dependencies and explore the individual packages:
@@ -204,27 +204,31 @@ $ mix ecto.rollback -n 3
 
 ## Debugging
 
-### `could not compile dependency :ex_keccak`
+**could not compile dependency :ex_keccak**
 
-Ensure you have rust installed so Rustler can build its dependencies:
+- Ensure you have rust installed so Rustler can build its dependencies:
 `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`
 
-### `nginx: [emerg] host not found in upstream grafana`
 
-Either run Grafana first with `docker compose up grafana` 
+**nginx: [emerg] host not found in upstream grafana**
+
+- Either run Grafana first with `docker compose up grafana` 
 followed by `docker compose up` OR run your normal
 `docker compose up` followed by `docker compose restart grafana`.
 
-### `(DBConnection.ConnectionError)`
 
-Usually related to the previous issue. Ensure your reverse proxy is running.
+**(DBConnection.ConnectionError)**
+
+- Usually related to the previous issue. Ensure your reverse proxy is running.
 Use `docker network ls` and `docker network inspect container_name` for a sanity
 check that your network is what you expect.
 
-### `(Postgrex.Error) FATAL 3D000 (invalid_catalog_name) database "prop_dev" does not exist`
 
-Rerun your migrations using `mix ecto.reset` and `mix ecto.migrate` and ensure
+**(Postgrex.Error) FATAL 3D000 (invalid_catalog_name) database "prop_dev" does not exist**
+
+- Rerun your migrations using `mix ecto.reset` and `mix ecto.migrate` and ensure
 they both pass successfully.
+
 
 ## Authors
 
