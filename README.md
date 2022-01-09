@@ -9,7 +9,9 @@ open source libraries and tools for strategy research, execution and operation.
 
 ## Install
 
-1. Add `prop` to your list of dependencies in `mix.exs`
+1. Install rust to build Rustler dependencies: `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`
+
+2. Add `prop` to your list of dependencies in `mix.exs`
 
 ```elixir
 def deps do
@@ -19,13 +21,15 @@ def deps do
 end
 ```
 
-2. Copy `.env.example` -> `.env` to configure your application when running `docker-compose`
+3. Copy `.env.example` -> `.env` to configure your application when running `docker-compose`
 
-3. Start the database `$ docker-compose up db`
+4. Start the database `$ docker-compose up db`
 
-4. Install dependencies & create the database `$ mix setup`
+5. Install dependencies & create the database `$ mix setup`
 
 ## Usage
+
+### Starting the server
 
 ```bash
 $ docker-compose up
@@ -39,6 +43,50 @@ When running the application with `docker-compose` you will need to enter the ba
 username: admin
 password: password
 ```
+
+### Download your data with [History](https://github.com/fremantle-industries/history)
+
+Before you can request to download candles you will need to import the products
+for a supported venue.
+
+Navigate to http://history.localhost/products and click on `Import` then wait 
+for History to finish adding products from supported venues.
+
+Go to http://history.localhost/data/candles/jobs and input the products you
+would like to download data for. Click on `Download` and wait for the data to
+finish by watching the status column.
+
+**NOTE**: Only FTX based products will currently download. You can check
+availability of platforms on the history
+[README](https://github.com/fremantle-industries/history/blob/main/README.md)
+
+
+### Visualize your data with [Grafana](https://grafana.com/)
+
+Navigate to
+[http://grafana.localhost/dashboards](http://grafana.localhost/dashboards)
+and select `Candles` from the `General` folder.
+
+Set the period to min_1 or whatever timeframe you downloaded the candles to see
+them plotted on a chart.
+
+
+### Explore your data with [Livebook](https://github.com/livebook-dev/livebook)
+
+Navigate to [http://livebook.localhost/](http://livebook.localhost/) and open a
+notebook by clicking on `New notebook` at the top right.
+
+You can pull in dependencies and explore the individual packages:
+
+```elixir
+Mix.install([
+  {:history, "~> 0.0.23"}
+])
+```
+
+Or, more conveniently you can setup a runtime that uses the context of your
+current application. By using Runtime > Configure > Mix Standalone OR Attached
+Node.
 
 ## Requirements
 
@@ -153,6 +201,30 @@ $ mix ecto.rollback
 # Last 3 migrations
 $ mix ecto.rollback -n 3
 ```
+
+## Debugging
+
+### `could not compile dependency :ex_keccak`
+
+Ensure you have rust installed so Rustler can build its dependencies:
+`curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`
+
+### `nginx: [emerg] host not found in upstream grafana`
+
+Either run Grafana first with `docker compose up grafana` 
+followed by `docker compose up` OR run your normal
+`docker compose up` followed by `docker compose restart grafana`.
+
+### `(DBConnection.ConnectionError)`
+
+Usually related to the previous issue. Ensure your reverse proxy is running.
+Use `docker network ls` and `docker network inspect container_name` for a sanity
+check that your network is what you expect.
+
+### `(Postgrex.Error) FATAL 3D000 (invalid_catalog_name) database "prop_dev" does not exist`
+
+Rerun your migrations using `mix ecto.reset` and `mix ecto.migrate` and ensure
+they both pass successfully.
 
 ## Authors
 
