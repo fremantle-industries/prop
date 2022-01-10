@@ -1,4 +1,4 @@
-FROM bitwalker/alpine-elixir-phoenix:latest AS builder
+FROM bitwalker/alpine-elixir-phoenix:1.13 AS builder
 
 WORKDIR /app
 
@@ -23,7 +23,7 @@ RUN apk add --no-cache gcc musl-dev && apk add --no-cache rust cargo
 RUN mix setup.deps
 RUN mix compile
 
-FROM bitwalker/alpine-elixir-phoenix:latest
+FROM bitwalker/alpine-elixir-phoenix:1.13
 
 WORKDIR /app
 COPY --from=builder /app .
