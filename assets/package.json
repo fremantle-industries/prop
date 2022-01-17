@@ -7,7 +7,7 @@
     "watch": "NODE_ENV=development webpack --mode development --watch"
   },
   "dependencies": {
-    "copy-button": "^2.0.0",
+    "copy-button": "^2.0.1",
     "notified_phoenix": "file:../deps/notified_phoenix",
     "phoenix": "file:../deps/phoenix",
     "phoenix_html": "file:../deps/phoenix_html",
