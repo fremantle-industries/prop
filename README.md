@@ -20,7 +20,7 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ```elixir
 def deps do
   [
-    {:prop, "~> 0.0.4"}
+    {:prop, "~> 0.0.5"}
   ]
 end
 ```

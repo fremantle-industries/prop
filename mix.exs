@@ -4,7 +4,7 @@ defmodule Prop.MixProject do
   def project do
     [
       app: :prop,
-      version: "0.0.4",
+      version: "0.0.5",
       elixir: "~> 1.13",
       package: package(),
       elixirc_paths: elixirc_paths(Mix.env()),
