@@ -29,7 +29,7 @@ services:
       - "${HISTORY_PROMETHEUS_METRICS_PORT:-9570}:${HISTORY_PROMETHEUS_METRICS_PORT:-9570}"
     environment:
       - DATABASE_URL=${DATABASE_URL:-ecto://postgres:postgres@db:5432/prop_?}
-      - HTTP_PORT
+      - RANCH_HTTP_PORT
       - PROP_SECRET_KEY_BASE
       - PROP_LIVE_VIEW_SIGNING_SALT
       - WORKBENCH_SECRET_KEY_BASE
@@ -98,7 +98,8 @@ services:
       - ./reverse_proxy/templates:/etc/nginx/templates
       - ./reverse_proxy/nginx.htpasswd:/etc/nginx/conf.d/nginx.htpasswd
     environment:
-      - HTTP_PORT
+      - RANCH_HTTP_PORT
+      - REVERSE_PROXY_HTTP_PORT
       - PROP_HOST
       - WORKBENCH_HOST
       - HISTORY_HOST

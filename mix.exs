@@ -50,7 +50,7 @@ defmodule Prop.MixProject do
       {:slurpee, "~> 0.0.11"},
       # {:stylish, github: "fremantle-industries/stylish", branch: "main", override: true},
       {:stylish, "~> 0.0.8"},
-      {:tai, "~> 0.0.74"},
+      {:tai, "~> 0.0.75"},
       {:telemetry_metrics, "~> 0.4"},
       {:telemetry_poller, "~> 1.0"},
       # {:workbench, github: "fremantle-industries/workbench", branch: "main", override: true},

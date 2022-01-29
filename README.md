@@ -215,30 +215,46 @@ $ mix ecto.rollback -n 3
 
 ## Debugging
 
+```
 **could not compile dependency :ex_keccak**
+```
 
 - Ensure you have rust installed so Rustler can build its dependencies:
 `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`
 
 
-**nginx: [emerg] host not found in upstream grafana**
+```
+nginx: [emerg] host not found in upstream grafana
+```
 
 - Either run Grafana first with `docker-compose up grafana` 
 followed by `docker-compose up` OR run your normal
 `docker-compose up` followed by `docker-compose restart grafana`.
 
 
+```
 **(DBConnection.ConnectionError)**
+```
 
 - Usually related to the previous issue. Ensure your reverse proxy is running.
 Use `docker network ls` and `docker network inspect container_name` for a sanity
 check that your network is what you expect.
 
 
+```
 **(Postgrex.Error) FATAL 3D000 (invalid_catalog_name) database "prop_dev" does not exist**
+```
 
 - Rerun your migrations using `mix ecto.reset` and `mix ecto.migrate` and ensure
 they both pass successfully.
+
+```
+** (Mix) Could not start application master_proxy: MasterProxy.Application.start(:normal, []) returned an error: shutdown: failed to start child: {:ranch_listener_sup, HTTP}
+    ** (EXIT) shutdown: failed to start child: :ranch_acceptors_sup
+        ** (EXIT) {:listen_error, HTTP, :eacces}
+```
+
+- Ranch cannot run on proptected ports without permission. Configure a different port e.g. `RANCH_HTTP_PORT=4000 iex mix phx.server`
 
 
 ## Authors
