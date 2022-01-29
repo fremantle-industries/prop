@@ -2,7 +2,7 @@ import Config
 
 # Shared variables
 env = config_env() |> Atom.to_string()
-http_port = (System.get_env("HTTP_PORT") || "4000") |> String.to_integer()
+ranch_http_port = (System.get_env("RANCH_HTTP_PORT") || "4000") |> String.to_integer()
 prop_host = System.get_env("PROP_HOST") || "prop.localhost"
 workbench_host = System.get_env("WORKBENCH_HOST") || "workbench.localhost"
 history_host = System.get_env("HISTORY_HOST") || "history.localhost"
@@ -72,7 +72,7 @@ config :prop, Prop.Repo,
   pool_size: 5
 
 config :prop, PropWeb.Endpoint,
-  url: [host: prop_host, port: http_port],
+  url: [host: prop_host, port: ranch_http_port],
   render_errors: [view: PropWeb.ErrorView, accepts: ~w(html json), layout: false],
   pubsub_server: Tai.PubSub,
   secret_key_base: prop_secret_key_base,
@@ -88,8 +88,8 @@ config :workbench, Workbench.Repo,
   pool_size: 5
 
 config :workbench, WorkbenchWeb.Endpoint,
-  http: [port: http_port],
-  url: [host: workbench_host, port: http_port],
+  http: [port: ranch_http_port],
+  url: [host: workbench_host, port: ranch_http_port],
   render_errors: [view: WorkbenchWeb.ErrorView, accepts: ~w(html json)],
   pubsub_server: Tai.PubSub,
   secret_key_base: workbench_secret_key_base,
@@ -122,8 +122,8 @@ config :history, History.Repo,
   pool_size: 5
 
 config :history, HistoryWeb.Endpoint,
-  http: [port: http_port],
-  url: [host: history_host, port: http_port],
+  http: [port: ranch_http_port],
+  url: [host: history_host, port: ranch_http_port],
   render_errors: [view: HistoryWeb.ErrorView, accepts: ~w(html json)],
   pubsub_server: Tai.PubSub,
   secret_key_base: history_secret_key_base,
@@ -150,8 +150,8 @@ config :rube, Rube.Repo,
   pool_size: 5
 
 config :rube, RubeWeb.Endpoint,
-  http: [port: http_port],
-  url: [host: rube_host, port: http_port],
+  http: [port: ranch_http_port],
+  url: [host: rube_host, port: ranch_http_port],
   render_errors: [view: RubeWeb.ErrorView, accepts: ~w(html json)],
   pubsub_server: Slurpee.PubSub,
   secret_key_base: rube_secret_key_base,
@@ -164,8 +164,8 @@ config :slurpee,
        {:system, :integer, "SLURPEE_PROMETHEUS_METRICS_PORT", 9568}
 
 config :slurpee, SlurpeeWeb.Endpoint,
-  http: [port: http_port],
-  url: [host: slurpee_host, port: http_port],
+  http: [port: ranch_http_port],
+  url: [host: slurpee_host, port: ranch_http_port],
   render_errors: [view: SlurpeeWeb.ErrorView, accepts: ~w(html json)],
   pubsub_server: Slurpee.PubSub,
   secret_key_base: slurpee_secret_key_base,
@@ -1560,7 +1560,7 @@ config :slurp,
 
 # Livebook
 config :livebook, LivebookWeb.Endpoint,
-  url: [host: livebook_host, port: http_port],
+  url: [host: livebook_host, port: ranch_http_port],
   pubsub_server: Livebook.PubSub,
   secret_key_base: prop_secret_key_base,
   live_view: [signing_salt: prop_live_view_signing_salt],
@@ -1571,31 +1571,31 @@ Livebook.config_runtime()
 # Master Proxy
 config :master_proxy,
   # any Cowboy options are allowed
-  http: [:inet6, port: http_port],
+  http: [:inet6, port: ranch_http_port],
   # https: [:inet6, port: 4443],
   backends: [
     %{
-      host: ~r/#{prop_host}/,
+      domain: prop_host,
       phoenix_endpoint: PropWeb.Endpoint
     },
     %{
-      host: ~r/#{workbench_host}/,
+      domain: workbench_host,
       phoenix_endpoint: WorkbenchWeb.Endpoint
     },
     %{
-      host: ~r/#{history_host}/,
+      domain: history_host,
       phoenix_endpoint: HistoryWeb.Endpoint
     },
     %{
-      host: ~r/#{rube_host}/,
+      domain: rube_host,
       phoenix_endpoint: RubeWeb.Endpoint
     },
     %{
-      host: ~r/#{slurpee_host}/,
+      domain: slurpee_host,
       phoenix_endpoint: SlurpeeWeb.Endpoint
     },
     %{
-      host: ~r/#{livebook_host}/,
+      domain: livebook_host,
       phoenix_endpoint: LivebookWeb.Endpoint
     }
   ]
@@ -1683,6 +1683,10 @@ config :navigator,
       %{
         label: "Prop",
         link: {PropWeb.Router.Helpers, :home_url, [PropWeb.Endpoint, :index]}
+      },
+      %{
+        label: "History",
+        link: {HistoryWeb.Router.Helpers, :trade_url, [HistoryWeb.Endpoint, :index]}
       },
       %{
         label: "Rube",
@@ -1799,6 +1803,10 @@ config :navigator,
         link: {PropWeb.Router.Helpers, :home_url, [PropWeb.Endpoint, :index]}
       },
       %{
+        label: "History",
+        link: {HistoryWeb.Router.Helpers, :trade_url, [HistoryWeb.Endpoint, :index]}
+      },
+      %{
         label: "Workbench",
         link: {WorkbenchWeb.Router.Helpers, :balance_all_url, [WorkbenchWeb.Endpoint, :index]}
       },
@@ -1847,6 +1855,10 @@ config :navigator,
       %{
         label: "Prop",
         link: {PropWeb.Router.Helpers, :home_url, [PropWeb.Endpoint, :index]}
+      },
+      %{
+        label: "History",
+        link: {HistoryWeb.Router.Helpers, :trade_url, [HistoryWeb.Endpoint, :index]}
       },
       %{
         label: "Workbench",
