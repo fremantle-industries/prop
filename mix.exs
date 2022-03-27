@@ -36,7 +36,7 @@ defmodule Prop.MixProject do
       {:libcluster, "~> 3.2"},
       {:livebook, "~> 0.5"},
       {:master_proxy, "~> 0.1"},
-      {:navigator, "~> 0.0.6"},
+      {:navigator, "~> 0.0.7"},
       {:notified_phoenix, "~> 0.0.7"},
       {:phoenix, "~> 1.6.0"},
       {:phoenix_ecto, "~> 4.4"},

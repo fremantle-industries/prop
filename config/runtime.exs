@@ -1606,279 +1606,279 @@ config :navigator,
     prop: [
       %{
         label: "Prop",
-        link: {PropWeb.Router.Helpers, :home_path, [PropWeb.Endpoint, :index]},
+        to: {PropWeb.Router.Helpers, :home_path, [PropWeb.Endpoint, :index]},
         class: "text-4xl"
       },
       %{
         label: "Workbench",
-        link: {WorkbenchWeb.Router.Helpers, :balance_all_url, [WorkbenchWeb.Endpoint, :index]}
+        to: {WorkbenchWeb.Router.Helpers, :balance_all_url, [WorkbenchWeb.Endpoint, :index]}
       },
       %{
         label: "History",
-        link: {HistoryWeb.Router.Helpers, :trade_url, [HistoryWeb.Endpoint, :index]}
+        to: {HistoryWeb.Router.Helpers, :trade_url, [HistoryWeb.Endpoint, :index]}
       },
       %{
         label: "Rube",
-        link: {RubeWeb.Router.Helpers, :home_url, [RubeWeb.Endpoint, :index]}
+        to: {RubeWeb.Router.Helpers, :home_url, [RubeWeb.Endpoint, :index]}
       },
       %{
         label: "Slurpee",
-        link: {SlurpeeWeb.Router.Helpers, :home_url, [SlurpeeWeb.Endpoint, :index]}
+        to: {SlurpeeWeb.Router.Helpers, :home_url, [SlurpeeWeb.Endpoint, :index]}
       },
       %{
         label: "Livebook",
-        link: {LivebookWeb.Router.Helpers, :home_url, [LivebookWeb.Endpoint, :page]}
+        to: {LivebookWeb.Router.Helpers, :home_url, [LivebookWeb.Endpoint, :page]}
       },
       %{
         label: "Grafana",
-        link: "http://#{grafana_host}"
+        to: "http://#{grafana_host}"
       },
       %{
         label: "Prometheus",
-        link: "http://#{prometheus_host}"
+        to: "http://#{prometheus_host}"
       }
     ],
     workbench: [
       %{
         label: "Workbench",
-        link: {WorkbenchWeb.Router.Helpers, :balance_all_path, [WorkbenchWeb.Endpoint, :index]},
+        to: {WorkbenchWeb.Router.Helpers, :balance_all_path, [WorkbenchWeb.Endpoint, :index]},
         class: "text-4xl"
       },
       %{
         label: "Balances",
-        link: {WorkbenchWeb.Router.Helpers, :balance_day_path, [WorkbenchWeb.Endpoint, :index]}
+        to: {WorkbenchWeb.Router.Helpers, :balance_day_path, [WorkbenchWeb.Endpoint, :index]}
       },
       %{
         label: "Wallets",
-        link: {WorkbenchWeb.Router.Helpers, :wallet_path, [WorkbenchWeb.Endpoint, :index]}
+        to: {WorkbenchWeb.Router.Helpers, :wallet_path, [WorkbenchWeb.Endpoint, :index]}
       },
       %{
         label: "Accounts",
-        link: {WorkbenchWeb.Router.Helpers, :account_path, [WorkbenchWeb.Endpoint, :index]}
+        to: {WorkbenchWeb.Router.Helpers, :account_path, [WorkbenchWeb.Endpoint, :index]}
       },
       %{
         label: "Orders",
-        link: {WorkbenchWeb.Router.Helpers, :order_path, [WorkbenchWeb.Endpoint, :index]}
+        to: {WorkbenchWeb.Router.Helpers, :order_path, [WorkbenchWeb.Endpoint, :index]}
       },
       %{
         label: "Positions",
-        link: {WorkbenchWeb.Router.Helpers, :position_path, [WorkbenchWeb.Endpoint, :index]}
+        to: {WorkbenchWeb.Router.Helpers, :position_path, [WorkbenchWeb.Endpoint, :index]}
       },
       %{
         label: "Products",
-        link: {WorkbenchWeb.Router.Helpers, :product_path, [WorkbenchWeb.Endpoint, :index]}
+        to: {WorkbenchWeb.Router.Helpers, :product_path, [WorkbenchWeb.Endpoint, :index]}
       },
       %{
         label: "Fees",
-        link: {WorkbenchWeb.Router.Helpers, :fee_path, [WorkbenchWeb.Endpoint, :index]}
+        to: {WorkbenchWeb.Router.Helpers, :fee_path, [WorkbenchWeb.Endpoint, :index]}
       },
       %{
         label: "Venues",
-        link: {WorkbenchWeb.Router.Helpers, :venue_path, [WorkbenchWeb.Endpoint, :index]}
+        to: {WorkbenchWeb.Router.Helpers, :venue_path, [WorkbenchWeb.Endpoint, :index]}
       },
       %{
         label: "Advisors",
-        link: {WorkbenchWeb.Router.Helpers, :fleet_path, [WorkbenchWeb.Endpoint, :index]}
+        to: {WorkbenchWeb.Router.Helpers, :fleet_path, [WorkbenchWeb.Endpoint, :index]}
       },
       %{
         label: "Prop",
-        link: {PropWeb.Router.Helpers, :home_url, [PropWeb.Endpoint, :index]}
+        to: {PropWeb.Router.Helpers, :home_url, [PropWeb.Endpoint, :index]}
       },
       %{
         label: "History",
-        link: {HistoryWeb.Router.Helpers, :trade_url, [HistoryWeb.Endpoint, :index]}
+        to: {HistoryWeb.Router.Helpers, :trade_url, [HistoryWeb.Endpoint, :index]}
       },
       %{
         label: "Rube",
-        link: {RubeWeb.Router.Helpers, :home_url, [RubeWeb.Endpoint, :index]}
+        to: {RubeWeb.Router.Helpers, :home_url, [RubeWeb.Endpoint, :index]}
       },
       %{
         label: "Slurpee",
-        link: {SlurpeeWeb.Router.Helpers, :home_url, [SlurpeeWeb.Endpoint, :index]}
+        to: {SlurpeeWeb.Router.Helpers, :home_url, [SlurpeeWeb.Endpoint, :index]}
       },
       %{
         label: "Livebook",
-        link: {LivebookWeb.Router.Helpers, :home_url, [LivebookWeb.Endpoint, :page]}
+        to: {LivebookWeb.Router.Helpers, :home_url, [LivebookWeb.Endpoint, :page]}
       },
       %{
         label: "Grafana",
-        link: "http://#{grafana_host}"
+        to: "http://#{grafana_host}"
       },
       %{
         label: "Prometheus",
-        link: "http://#{prometheus_host}"
+        to: "http://#{prometheus_host}"
       }
     ],
     history: [
       %{
         label: "History",
-        link: {HistoryWeb.Router.Helpers, :trade_path, [HistoryWeb.Endpoint, :index]},
+        to: {HistoryWeb.Router.Helpers, :trade_path, [HistoryWeb.Endpoint, :index]},
         class: "text-4xl"
       },
       %{
         label: "Data",
-        link: {HistoryWeb.Router.Helpers, :trade_path, [HistoryWeb.Endpoint, :index]}
+        to: {HistoryWeb.Router.Helpers, :trade_path, [HistoryWeb.Endpoint, :index]}
       },
       %{
         label: "Products",
-        link: {HistoryWeb.Router.Helpers, :product_path, [HistoryWeb.Endpoint, :index]}
+        to: {HistoryWeb.Router.Helpers, :product_path, [HistoryWeb.Endpoint, :index]}
       },
       %{
         label: "Tokens",
-        link: {HistoryWeb.Router.Helpers, :token_path, [HistoryWeb.Endpoint, :index]}
+        to: {HistoryWeb.Router.Helpers, :token_path, [HistoryWeb.Endpoint, :index]}
       },
       %{
         label: "Prop",
-        link: {PropWeb.Router.Helpers, :home_url, [PropWeb.Endpoint, :index]}
+        to: {PropWeb.Router.Helpers, :home_url, [PropWeb.Endpoint, :index]}
       },
       %{
         label: "Workbench",
-        link: {WorkbenchWeb.Router.Helpers, :balance_all_url, [WorkbenchWeb.Endpoint, :index]}
+        to: {WorkbenchWeb.Router.Helpers, :balance_all_url, [WorkbenchWeb.Endpoint, :index]}
       },
       %{
         label: "Rube",
-        link: {RubeWeb.Router.Helpers, :home_url, [RubeWeb.Endpoint, :index]}
+        to: {RubeWeb.Router.Helpers, :home_url, [RubeWeb.Endpoint, :index]}
       },
       %{
         label: "Slurpee",
-        link: {SlurpeeWeb.Router.Helpers, :home_url, [SlurpeeWeb.Endpoint, :index]}
+        to: {SlurpeeWeb.Router.Helpers, :home_url, [SlurpeeWeb.Endpoint, :index]}
       },
       %{
         label: "Livebook",
-        link: {LivebookWeb.Router.Helpers, :home_url, [LivebookWeb.Endpoint, :page]}
+        to: {LivebookWeb.Router.Helpers, :home_url, [LivebookWeb.Endpoint, :page]}
       },
       %{
         label: "Grafana",
-        link: "http://#{grafana_host}"
+        to: "http://#{grafana_host}"
       },
       %{
         label: "Prometheus",
-        link: "http://#{prometheus_host}"
+        to: "http://#{prometheus_host}"
       }
     ],
     rube: [
       %{
         label: "Rube",
-        link: {RubeWeb.Router.Helpers, :home_url, [RubeWeb.Endpoint, :index]},
+        to: {RubeWeb.Router.Helpers, :home_url, [RubeWeb.Endpoint, :index]},
         class: "text-4xl"
       },
       %{
         label: "Tokens",
-        link: {RubeWeb.Router.Helpers, :token_path, [RubeWeb.Endpoint, :index]}
+        to: {RubeWeb.Router.Helpers, :token_path, [RubeWeb.Endpoint, :index]}
       },
       %{
         label: "Money Markets",
-        link: {RubeWeb.Router.Helpers, :money_market_path, [RubeWeb.Endpoint, :index]}
+        to: {RubeWeb.Router.Helpers, :money_market_path, [RubeWeb.Endpoint, :index]}
       },
       %{
         label: "AMM",
-        link: {RubeWeb.Router.Helpers, :amm_path, [RubeWeb.Endpoint, :index]}
+        to: {RubeWeb.Router.Helpers, :amm_path, [RubeWeb.Endpoint, :index]}
       },
       %{
         label: "FutureSwap",
-        link: {RubeWeb.Router.Helpers, :future_swap_path, [RubeWeb.Endpoint, :index]}
+        to: {RubeWeb.Router.Helpers, :future_swap_path, [RubeWeb.Endpoint, :index]}
       },
       %{
         label: "Perpetual",
-        link: {RubeWeb.Router.Helpers, :perpetual_protocol_path, [RubeWeb.Endpoint, :index]}
+        to: {RubeWeb.Router.Helpers, :perpetual_protocol_path, [RubeWeb.Endpoint, :index]}
       },
       %{
         label: "Injective",
-        link: {RubeWeb.Router.Helpers, :injective_protocol_path, [RubeWeb.Endpoint, :index]}
+        to: {RubeWeb.Router.Helpers, :injective_protocol_path, [RubeWeb.Endpoint, :index]}
       },
       %{
         label: "Vega",
-        link: {RubeWeb.Router.Helpers, :vega_protocol_path, [RubeWeb.Endpoint, :index]}
+        to: {RubeWeb.Router.Helpers, :vega_protocol_path, [RubeWeb.Endpoint, :index]}
       },
       %{
         label: "Chainlink",
-        link: {RubeWeb.Router.Helpers, :chainlink_path, [RubeWeb.Endpoint, :index]}
+        to: {RubeWeb.Router.Helpers, :chainlink_path, [RubeWeb.Endpoint, :index]}
       },
       %{
         label: "Keep3r",
-        link: {RubeWeb.Router.Helpers, :keep3r_path, [RubeWeb.Endpoint, :index]}
+        to: {RubeWeb.Router.Helpers, :keep3r_path, [RubeWeb.Endpoint, :index]}
       },
       %{
         label: "Prop",
-        link: {PropWeb.Router.Helpers, :home_url, [PropWeb.Endpoint, :index]}
+        to: {PropWeb.Router.Helpers, :home_url, [PropWeb.Endpoint, :index]}
       },
       %{
         label: "History",
-        link: {HistoryWeb.Router.Helpers, :trade_url, [HistoryWeb.Endpoint, :index]}
+        to: {HistoryWeb.Router.Helpers, :trade_url, [HistoryWeb.Endpoint, :index]}
       },
       %{
         label: "Workbench",
-        link: {WorkbenchWeb.Router.Helpers, :balance_all_url, [WorkbenchWeb.Endpoint, :index]}
+        to: {WorkbenchWeb.Router.Helpers, :balance_all_url, [WorkbenchWeb.Endpoint, :index]}
       },
       %{
         label: "Slurpee",
-        link: {SlurpeeWeb.Router.Helpers, :home_url, [SlurpeeWeb.Endpoint, :index]}
+        to: {SlurpeeWeb.Router.Helpers, :home_url, [SlurpeeWeb.Endpoint, :index]}
       },
       %{
         label: "Livebook",
-        link: {LivebookWeb.Router.Helpers, :home_url, [LivebookWeb.Endpoint, :page]}
+        to: {LivebookWeb.Router.Helpers, :home_url, [LivebookWeb.Endpoint, :page]}
       },
       %{
         label: "Grafana",
-        link: "http://#{grafana_host}"
+        to: "http://#{grafana_host}"
       },
       %{
         label: "Prometheus",
-        link: "http://#{prometheus_host}"
+        to: "http://#{prometheus_host}"
       }
     ],
     slurpee: [
       %{
         label: "Slurpee",
-        link: {SlurpeeWeb.Router.Helpers, :home_url, [SlurpeeWeb.Endpoint, :index]},
+        to: {SlurpeeWeb.Router.Helpers, :home_url, [SlurpeeWeb.Endpoint, :index]},
         class: "text-4xl"
       },
       %{
         label: "Blockchains",
-        link: {SlurpeeWeb.Router.Helpers, :blockchain_path, [SlurpeeWeb.Endpoint, :index]}
+        to: {SlurpeeWeb.Router.Helpers, :blockchain_path, [SlurpeeWeb.Endpoint, :index]}
       },
       %{
         label: "Log Subscriptions",
-        link: {SlurpeeWeb.Router.Helpers, :log_subscription_path, [SlurpeeWeb.Endpoint, :index]}
+        to: {SlurpeeWeb.Router.Helpers, :log_subscription_path, [SlurpeeWeb.Endpoint, :index]}
       },
       %{
         label: "New Head Subscriptions",
-        link:
+        to:
           {SlurpeeWeb.Router.Helpers, :new_head_subscription_path, [SlurpeeWeb.Endpoint, :index]}
       },
       %{
         label: "Transaction Subscriptions",
-        link:
+        to:
           {SlurpeeWeb.Router.Helpers, :transaction_subscription_path,
            [SlurpeeWeb.Endpoint, :index]}
       },
       %{
         label: "Prop",
-        link: {PropWeb.Router.Helpers, :home_url, [PropWeb.Endpoint, :index]}
+        to: {PropWeb.Router.Helpers, :home_url, [PropWeb.Endpoint, :index]}
       },
       %{
         label: "History",
-        link: {HistoryWeb.Router.Helpers, :trade_url, [HistoryWeb.Endpoint, :index]}
+        to: {HistoryWeb.Router.Helpers, :trade_url, [HistoryWeb.Endpoint, :index]}
       },
       %{
         label: "Workbench",
-        link: {WorkbenchWeb.Router.Helpers, :balance_all_url, [WorkbenchWeb.Endpoint, :index]}
+        to: {WorkbenchWeb.Router.Helpers, :balance_all_url, [WorkbenchWeb.Endpoint, :index]}
       },
       %{
         label: "Rube",
-        link: {RubeWeb.Router.Helpers, :home_url, [RubeWeb.Endpoint, :index]}
+        to: {RubeWeb.Router.Helpers, :home_url, [RubeWeb.Endpoint, :index]}
       },
       %{
         label: "Livebook",
-        link: {LivebookWeb.Router.Helpers, :home_url, [LivebookWeb.Endpoint, :page]}
+        to: {LivebookWeb.Router.Helpers, :home_url, [LivebookWeb.Endpoint, :page]}
       },
       %{
         label: "Grafana",
-        link: "http://#{grafana_host}"
+        to: "http://#{grafana_host}"
       },
       %{
         label: "Prometheus",
-        link: "http://#{prometheus_host}"
+        to: "http://#{prometheus_host}"
       }
     ]
   }
